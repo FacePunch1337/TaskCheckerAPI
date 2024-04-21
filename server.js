@@ -7,9 +7,9 @@ const api = require('./routes/api')
 const app = express();
 
 app.use(express.json());
-app.use("/api", api)
-app.use(express.urlencoded({ extended: false }));
 
+app.use(express.urlencoded({ extended: false }));
+app.use("/api", api)
 // Маршруты
 
 // Получить всех пользователей
