@@ -2,10 +2,12 @@ const express = require('express');
 const mongoose = require('mongoose');
 const User = require('./models/userModel.js');
 const bcrypt = require('bcrypt'); // Добавляем bcrypt
+const api = require('./routes/api')
 
 const app = express();
 
 app.use(express.json());
+app.use("/api", api)
 app.use(express.urlencoded({ extended: false }));
 
 // Маршруты
