@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const User = require('./models/userModel.js');
 const bcrypt = require('bcrypt'); // Добавляем bcrypt
 const api = require('./routes/api.js')
-const cors = require('cors')
+
 
 const app = express();
 const port = process.env.PORT || 3000;
@@ -11,7 +11,7 @@ const port = process.env.PORT || 3000;
 app.use(express.json());
 app.use("/api", api)
 app.use(express.urlencoded({ extended: false }));
-app.use(cors);
+
 // Маршруты
 
 // Получить всех пользователей
