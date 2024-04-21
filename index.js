@@ -6,13 +6,17 @@ const api = require('./routes/api.js')
 
 
 const app = express();
-const port = process.env.PORT || 3000;
+const port = process.env.PORT || 8000;
 
 app.use(express.json());
 app.use("/api", api)
 app.use(express.urlencoded({ extended: false }));
 
 // Маршруты
+
+app.get('/', (req, res) =>{
+    res.status(200).send("Hello from API!");
+});
 
 // Получить всех пользователей
 app.get('/users', async (req, res) => {
@@ -81,7 +85,7 @@ mongoose.connect('mongodb+srv://rezol1337:GVDGGnZDTVrT6zRi@cluster0.w3rkzvn.mong
     .then(() => {
         console.log('Connected to MongoDB');
         app.listen(port, () => {
-            console.log(`Node API app is running on port 3000`);
+            console.log(`Node API app is running on port 8000`);
         });
     })
     .catch((error) => {
