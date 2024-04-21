@@ -1,0 +1,27 @@
+version: '3'
+services:
+  nodeapp:
+    image: nodeapp:taskcheker
+    ports:
+      - "3000:3000"
+    networks:
+      - mynetwork
+    depends_on:
+      - mysql-container
+    environment:
+      - DATABASE_HOST=mysql-container
+      - DATABASE_USER=root
+      - DATABASE_PASSWORD=root
+      - DATABASE_NAME=taskcheker
+
+  mysql-container:
+    image: mysql:taskcheker
+    environment:
+      MYSQL_ROOT_PASSWORD: root
+      MYSQL_DATABASE: taskcheker
+    networks:
+      - mynetwork
+
+networks:
+  mynetwork:
+    driver: bridge
