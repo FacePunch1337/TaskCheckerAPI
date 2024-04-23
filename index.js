@@ -80,7 +80,7 @@
         }
     });
 
-    app.post('/login', async (req, res) => {
+    app.post('users/login', async (req, res) => {
         try {
             console.log("Received login request:");
             console.log(req.body);
