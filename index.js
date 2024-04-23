@@ -80,26 +80,34 @@
         }
     });
 
-    // Маршрут для аутентификации пользователя
-app.post('/login', async (req, res) => {
-    try {
-        const { username, password } = req.body;
-        // Находим пользователя по имени пользователя
-        const user = await User.findOne({ username });
-        if (!user) {
-            return res.status(404).json({ message: "Пользователь не найден" });
+    app.post('/login', async (req, res) => {
+        try {
+            console.log("Received login request:");
+            console.log(req.body);
+    
+            const { username, password } = req.body;
+            // Находим пользователя по имени пользователя
+            const user = await User.findOne({ username });
+            if (!user) {
+                console.log("User not found");
+                return res.status(404).json({ message: "Пользователь не найден" });
+            }
+            // Сравниваем предоставленный пароль с хэшированным паролем в базе данных
+            const passwordMatch = await bcrypt.compare(password, user.password);
+            if (!passwordMatch) {
+                console.log("Incorrect password");
+                return res.status(401).json({ message: "Неправильный пароль" });
+            }
+            // Аутентификация успешна
+            console.log("Authentication successful");
+            res.status(200).json({ message: "Успешная аутентификация" });
+        } catch (error) {
+            console.error("Error during login:", error);
+            res.status(500).json({ message: error.message });
         }
-        // Сравниваем предоставленный пароль с хэшированным паролем в базе данных
-        const passwordMatch = await bcrypt.compare(password, user.password);
-        if (!passwordMatch) {
-            return res.status(401).json({ message: "Неправильный пароль" });
-        }
-        // Аутентификация успешна
-        res.status(200).json({ message: "Успешная аутентификация" });
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
+    });
+    
+    
 
 
     mongoose.set("strictQuery", false);
