@@ -43,6 +43,7 @@ app.post('/users', async (req, res) => {
 
 
 // Аутентификация пользователя
+// Аутентификация пользователя
 app.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
@@ -56,13 +57,14 @@ app.post('/login', async (req, res) => {
         if (!passwordMatch) {
             return res.status(401).json({ message: "Неправильный пароль" });
         }
-        // Аутентификация успешна
-        res.status(200).json({ message: "Успешная аутентификация" });
+        // Аутентификация успешна, возвращаем данные пользователя
+        res.status(200).json({ message: "Успешная аутентификация", user });
     } catch (error) {
         console.error("Error during login:", error);
         res.status(500).json({ message: error.message });
     }
 });
+
 
 // Подключение к MongoDB
 mongoose.connect('mongodb+srv://rezol1337:GVDGGnZDTVrT6zRi@cluster0.w3rkzvn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
