@@ -14,10 +14,10 @@ const userSchema = mongoose.Schema(
             type: String,
             required: [true, "Please enter a email"]
         },
-        avatarURL: {
+        /*avatarURL: {
             type: String,
             required: [true, "Please enter a avatarURL"]
-        }
+        }*/
         
     },
     {
