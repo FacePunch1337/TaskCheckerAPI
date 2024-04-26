@@ -56,24 +56,40 @@ app.post('/users', async (req, res) => {
   }
 });
 
+// Получить пользователя по его ID
+app.get('/users/:userId', async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: "Пользователь не найден" });
+      }
+      res.status(200).json(user);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+
 // Загрузить файл пользователя
+
 app.post('/users/:userId/avatar', upload.single('avatar'), async (req, res) => {
-  try {
-    const userId = req.params.userId;
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "Пользователь не найден" });
+    try {
+      const userId = req.params.userId;
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: "Пользователь не найден" });
+      }
+      if (!req.file) {
+        return res.status(400).json({ message: "Файл не был загружен" });
+      }
+      user.avatar = req.file.path;
+      await user.save();
+      res.status(200).json({ message: "Аватар пользователя успешно загружен" });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
-    if (!req.file) {
-      return res.status(400).json({ message: "Файл не был загружен" });
-    }
-    user.avatar = req.file.path;
-    await user.save();
-    res.status(200).json({ message: "Аватар пользователя успешно загружен" });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+  });
+  
 
 // Аутентификация пользователя
 app.post('/login', async (req, res) => {
