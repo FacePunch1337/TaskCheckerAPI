@@ -4,7 +4,7 @@ const User = require('./models/userModel.js');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
 const api = require('./routes/api.js');
-
+const path = require('path');
 const app = express();
 const port = process.env.PORT || 8000;
 
