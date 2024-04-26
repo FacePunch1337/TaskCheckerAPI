@@ -16,7 +16,7 @@ app.use(express.urlencoded({ extended: false }));
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
       const userId = req.params.userId; // Получаем userId из параметра запроса
-      cb(null, `uploads/users/${userId}/avatar`); // Указываем путь для сохранения файла
+      cb(null, `/users/${userId}/avatar`); // Указываем путь для сохранения файла
     },
     filename: function (req, file, cb) {
       cb(null, file.originalname);
