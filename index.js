@@ -12,7 +12,10 @@ app.use(express.json());
 app.use("/api", api);
 app.use('/uploads', express.static('uploads'));
 app.use(express.urlencoded({ extended: false }));
-
+app.use((err, req, res, next) => {
+    console.error(err.stack);
+    res.status(500).send('Что-то пошло не так!');
+  });
 // Настройка multer для обработки файлов
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {
