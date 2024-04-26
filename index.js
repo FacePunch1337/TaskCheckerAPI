@@ -90,6 +90,24 @@ app.post('/users/:userId/avatar', upload.single('avatar'), async (req, res) => {
     }
   });
   
+// Получить аватар пользователя по его идентификатору
+app.get('/users/:userId/avatar', async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "Пользователь не найден" });
+        }
+        // Проверяем, есть ли у пользователя аватар
+        if (!user.avatar) {
+            return res.status(404).json({ message: "У пользователя нет аватара" });
+        }
+        // Отправляем аватар пользователя в ответе
+        res.sendFile(user.avatar);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 
 // Аутентификация пользователя
 app.post('/login', async (req, res) => {
