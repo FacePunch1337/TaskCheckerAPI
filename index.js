@@ -10,7 +10,7 @@ const port = process.env.PORT || 8000;
 
 app.use(express.json());
 app.use("/api", api);
-app.use(express.static('/uploads'));
+app.use('/uploads', express.static('uploads'));
 app.use(express.urlencoded({ extended: false }));
 
 // Настройка multer для обработки файлов
