@@ -84,7 +84,7 @@ app.post('/users/:userId/avatar', upload.single('avatar'), async (req, res) => {
       }
       user.avatar = req.file.path;
       await user.save();
-      res.status(200).json({ message: "Аватар пользователя успешно загружен" });
+      res.status(200).json({ message: "Avatar uploaded successfully" });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
