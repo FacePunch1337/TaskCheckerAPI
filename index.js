@@ -4,13 +4,12 @@ const User = require('./models/userModel.js');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
 const api = require('./routes/api.js');
-const path = require('path');
+
 const app = express();
 const port = process.env.PORT || 8000;
 
 app.use(express.json());
 app.use("/api", api);
-app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 app.use(express.urlencoded({ extended: false }));
 
 // Настройка multer для обработки файлов
@@ -85,7 +84,7 @@ app.post('/users/:userId/avatar', upload.single('avatar'), async (req, res) => {
       }
       user.avatar = req.file.path;
       await user.save();
-      res.status(200).json({ message: "Avatar uploaded successfully" });
+      res.status(200).json({ message: "Аватар пользователя успешно загружен" });
     } catch (error) {
       res.status(500).json({ message: error.message });
     }
