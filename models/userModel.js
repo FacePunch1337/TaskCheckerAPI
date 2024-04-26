@@ -1,4 +1,4 @@
-const mongoose = require('mongoose')
+const mongoose = require('mongoose');
 
 const userSchema = mongoose.Schema(
     {
@@ -9,25 +9,21 @@ const userSchema = mongoose.Schema(
         },
         email: {
             type: String,
-            required: [true, "Please enter a email"],
+            required: [true, "Please enter an email"],
             unique: true
         },
         password: {
             type: String,
             required: [true, "Please enter a password"]
         },
-       
-        /*avatarURL: {
-            type: String,
-            required: [true, "Please enter a avatarURL"]
-        }*/
-        
+        avatarPath: {
+            type: String // Путь к аватару пользователя
+        }
     },
     {
         timestamps: true
     }
-)
-
+);
 
 const User = mongoose.model('User', userSchema);
 
