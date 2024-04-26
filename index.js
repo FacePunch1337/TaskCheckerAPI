@@ -15,13 +15,14 @@ app.use(express.urlencoded({ extended: false }));
 // Настройка multer для обработки файлов
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
-      const userId = req.params.userId; // Получаем userId из параметра запроса
-      cb(null, `/users/${userId}/avatar`); // Указываем путь для сохранения файла
+      cb(null, './public/users');
     },
     filename: function (req, file, cb) {
-      cb(null, file.originalname);
+      const userId = req.params.userId;
+      cb(null, `${userId}_avatar.jpg`); // Используйте расширение файла, которое ожидается на сервере
     }
   });
+
 
 const upload = multer({ storage: storage });
 
