@@ -15,7 +15,7 @@ admin.initializeApp({
   storageBucket: "taskcheker-39fd8.appspot.com" // Имя вашего бакета без префикса "gs://"
 });
 const bucket = admin.storage().bucket();
-const firestore = admin.firestore(); // Инициализация Firestore
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -98,10 +98,7 @@ app.post('/users/:userId/avatar', async (req, res) => {
       user.avatar = imageUrl;
       await user.save();
 
-      // Сохраняем URL файла также в Firestore
-      await firestore.collection('users').doc(userId).update({
-          avatar: imageUrl
-      });
+     
 
       res.status(200).json({ message: "Avatar uploaded successfully", imageUrl });
     } catch (error) {
