@@ -2,9 +2,9 @@ const express = require('express');
 const mongoose = require('mongoose');
 const User = require('./models/userModel.js');
 const bcrypt = require('bcrypt');
-const multer = require('multer');
 const admin = require('firebase-admin');
 const serviceAccount = require('./path/to/serviceAccountKey.json');
+const fileUpload = require('express-fileupload');
 
 const app = express();
 const port = process.env.PORT || 8000;
@@ -17,11 +17,9 @@ admin.initializeApp({
 const bucket = admin.storage().bucket();
 const firestore = admin.firestore(); // Инициализация Firestore
 
-// Настройка multer для обработки файлов
-const upload = multer();
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(fileUpload());
 
 // Маршруты
 
@@ -71,25 +69,25 @@ app.get('/users/:userId', async (req, res) => {
 
 
 // Загрузить файл пользователя в Firestore
-app.post('/users/:userId/avatar', upload.single('avatar'), async (req, res) => {
+app.post('/users/:userId/avatar', async (req, res) => {
     try {
       const userId = req.params.userId;
       const user = await User.findById(userId);
       if (!user) {
         return res.status(404).json({ message: "Пользователь не найден" });
       }
-      if (!req.file) {
+      if (!req.files || Object.keys(req.files).length === 0) {
         return res.status(400).json({ message: "Файл не был загружен" });
       }
 
-      // Создаем путь в Firestore, где будем хранить изображения пользователя
-      const imagePath = `users/${userId}/avatar/${req.file.originalname}`;
-      const file = bucket.file(imagePath);
+      const avatarFile = req.files.avatar;
+      const imagePath = `users/${userId}/avatar/${avatarFile.name}`;
 
-      // Загружаем изображение в Firestore
-      await file.save(req.file.buffer, {
+      // Загружаем файл в Firebase Storage
+      const file = bucket.file(imagePath);
+      await file.save(avatarFile.data, {
         metadata: {
-          contentType: req.file.mimetype
+          contentType: avatarFile.mimetype
         }
       });
 
