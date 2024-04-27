@@ -9,16 +9,13 @@ const serviceAccount = require('./path/to/serviceAccountKey.json');
 const app = express();
 const port = process.env.PORT || 8000;
 
-const admin = require('firebase-admin');
-const serviceAccount = require('./path/to/serviceAccountKey.json');
-const firestore = admin.firestore();
-
 // Инициализация Firebase Admin SDK
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  storageBucket: "gs://taskcheker-39fd8.appspot.com" // Замените на адрес вашего Firebase Storage бакета
+  storageBucket: "taskcheker-39fd8.appspot.com" // Имя вашего бакета без префикса "gs://"
 });
 const bucket = admin.storage().bucket();
+const firestore = admin.firestore(); // Инициализация Firestore
 
 // Настройка multer для обработки файлов
 const upload = multer();
