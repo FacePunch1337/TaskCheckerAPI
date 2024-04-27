@@ -68,44 +68,7 @@ app.get('/users/:userId', async (req, res) => {
   });
 
 
-// Загрузить файл пользователя в Firestore
-app.post('/users/:userId/avatar', async (req, res) => {
-    try {
-      const userId = req.params.userId;
-      const user = await User.findById(userId);
-      if (!user) {
-        return res.status(404).json({ message: "Пользователь не найден" });
-      }
-      if (!req.files || Object.keys(req.files).length === 0) {
-        return res.status(400).json({ message: "Файл не был загружен" });
-      }
 
-      const avatarFile = req.files.avatar;
-      const imagePath = `users/${userId}/avatar/${avatarFile.name}`;
-
-      // Загружаем файл в Firebase Storage
-      const file = bucket.file(imagePath);
-      await file.save(avatarFile.data, {
-        metadata: {
-          contentType: avatarFile.mimetype
-        }
-      });
-
-      // Получаем URL загруженного файла
-      const imageUrl = `https://storage.googleapis.com/${bucket.name}/${imagePath}`;
-
-      // Сохраняем URL в базе данных
-      user.avatar = imageUrl;
-      await user.save();
-
-     
-
-      res.status(200).json({ message: "Avatar uploaded successfully", imageUrl });
-    } catch (error) {
-      console.error("Error uploading avatar:", error);
-      res.status(500).json({ message: error.message });
-    }
-});
 
 
 // Аутентификация пользователя
