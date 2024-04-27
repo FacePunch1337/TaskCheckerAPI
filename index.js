@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const User = require('./models/userModel.js');
 const bcrypt = require('bcrypt');
 const admin = require('firebase-admin');
-const serviceAccount = require('./serviceAccountKey.json');
+const serviceAccount = require('/serviceAccountKey.json');
 const bucket = admin.storage().bucket();
 const fileUpload = require('express-fileupload');
 
