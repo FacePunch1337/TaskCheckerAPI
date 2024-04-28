@@ -1,6 +1,7 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const User = require('./models/userModel.js');
+const admin = require('firebase-admin');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
 const api = require('./routes/api.js');
@@ -12,18 +13,14 @@ app.use(express.json());
 app.use("/api", api);
 app.use(express.urlencoded({ extended: false }));
 
-// Настройка multer для обработки файлов
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-      cb(null, './public/users');
-    },
-    filename: function (req, file, cb) {
-      const userId = req.params.userId;
-      cb(null, `${userId}_avatar.jpg`); // Используйте расширение файла, которое ожидается на сервере
-    }
+// Инициализация Firebase Admin SDK
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    storageBucket: "taskcheker-39fd8.appspot.com" // Имя вашего бакета без префикса "gs://"
   });
+  
 
-
+  const bucket = admin.storage().bucket();
 const upload = multer({ storage: storage });
 
 // Маршруты
@@ -74,42 +71,42 @@ app.get('/users/:userId', async (req, res) => {
 
 // Загрузить файл пользователя
 
-app.post('/users/:userId/avatar', upload.single('avatar'), async (req, res) => {
+// Загрузить файл пользователя в Firestore
+app.post('/users/:userId/avatar', async (req, res) => {
     try {
       const userId = req.params.userId;
       const user = await User.findById(userId);
       if (!user) {
         return res.status(404).json({ message: "Пользователь не найден" });
       }
-      if (!req.file) {
+      if (!req.files || Object.keys(req.files).length === 0) {
         return res.status(400).json({ message: "Файл не был загружен" });
       }
-      user.avatar = req.file.path;
+  
+      const avatarFile = req.files.avatar;
+      const imagePath = `users/${userId}/avatar/${avatarFile.name}`;
+  
+      // Загружаем файл в Firebase Storage
+      const file = bucket.file(imagePath);
+      await file.save(avatarFile.data, {
+        metadata: {
+          contentType: avatarFile.mimetype
+        }
+      });
+  
+      // Получаем URL загруженного файла
+      const imageUrl = `https://storage.googleapis.com/${bucket.name}/${imagePath}`;
+  
+      // Сохраняем URL в базе данных
+      user.avatar = imageUrl;
       await user.save();
-      res.status(200).json({ message: "Avatar uploaded successfully" });
+  
+      res.status(200).json({ message: "Avatar uploaded successfully", imageUrl });
     } catch (error) {
+      console.error("Error uploading avatar:", error);
       res.status(500).json({ message: error.message });
     }
   });
-  
-// Получить аватар пользователя по его идентификатору
-app.get('/users/:userId/avatar', async (req, res) => {
-    try {
-        const userId = req.params.userId;
-        const user = await User.findById(userId);
-        if (!user) {
-            return res.status(404).json({ message: "Пользователь не найден" });
-        }
-        // Проверяем, есть ли у пользователя аватар
-        if (!user.avatar) {
-            return res.status(404).json({ message: "У пользователя нет аватара" });
-        }
-        // Отправляем аватар пользователя в ответе
-        res.sendFile(user.avatar);
-    } catch (error) {
-        res.status(500).json({ message: error.message });
-    }
-});
 
 // Аутентификация пользователя
 app.post('/login', async (req, res) => {
