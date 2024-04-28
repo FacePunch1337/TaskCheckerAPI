@@ -2,18 +2,29 @@ const express = require('express');
 const mongoose = require('mongoose');
 const User = require('./models/userModel.js');
 const bcrypt = require('bcrypt');
+const multer = require('multer');
+const api = require('./routes/api.js');
 
-const fileUpload = require('express-fileupload');
 const app = express();
 const port = process.env.PORT || 8000;
 
-// Инициализация Firebase Admin SDK
-
-
-
 app.use(express.json());
+app.use("/api", api);
 app.use(express.urlencoded({ extended: false }));
-app.use(fileUpload());
+
+// Настройка multer для обработки файлов
+const storage = multer.diskStorage({
+    destination: function (req, file, cb) {
+      cb(null, './public/users');
+    },
+    filename: function (req, file, cb) {
+      const userId = req.params.userId;
+      cb(null, `${userId}_avatar.jpg`); // Используйте расширение файла, которое ожидается на сервере
+    }
+  });
+
+
+const upload = multer({ storage: storage });
 
 // Маршруты
 
@@ -49,26 +60,61 @@ app.post('/users', async (req, res) => {
 
 // Получить пользователя по его ID
 app.get('/users/:userId', async (req, res) => {
-  try {
-    const userId = req.params.userId;
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "Пользователь не найден" });
+    try {
+      const userId = req.params.userId;
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: "Пользователь не найден" });
+      }
+      res.status(200).json(user);
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
-    res.status(200).json(user);
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+  });
 
+// Загрузить файл пользователя
+
+app.post('/users/:userId/avatar', upload.single('avatar'), async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      const user = await User.findById(userId);
+      if (!user) {
+        return res.status(404).json({ message: "Пользователь не найден" });
+      }
+      if (!req.file) {
+        return res.status(400).json({ message: "Файл не был загружен" });
+      }
+      user.avatar = req.file.path;
+      await user.save();
+      res.status(200).json({ message: "Avatar uploaded successfully" });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
+    }
+  });
+  
+// Получить аватар пользователя по его идентификатору
+app.get('/users/:userId/avatar', async (req, res) => {
+    try {
+        const userId = req.params.userId;
+        const user = await User.findById(userId);
+        if (!user) {
+            return res.status(404).json({ message: "Пользователь не найден" });
+        }
+        // Проверяем, есть ли у пользователя аватар
+        if (!user.avatar) {
+            return res.status(404).json({ message: "У пользователя нет аватара" });
+        }
+        // Отправляем аватар пользователя в ответе
+        res.sendFile(user.avatar);
+    } catch (error) {
+        res.status(500).json({ message: error.message });
+    }
+});
 
 // Аутентификация пользователя
 app.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
-    if (!username || !password) {
-      return res.status(400).json({ message: "Имя пользователя и пароль обязательны" });
-    }
     // Находим пользователя по имени пользователя
     const user = await User.findOne({ username });
     if (!user) {
