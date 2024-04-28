@@ -14,14 +14,8 @@ app.use("/api", api);
 app.use(express.urlencoded({ extended: false }));
 
 // Инициализация Firebase Admin SDK
-admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
-    storageBucket: "taskcheker-39fd8.appspot.com" // Имя вашего бакета без префикса "gs://"
-  });
-  
 
-  const bucket = admin.storage().bucket();
-const upload = multer({ storage: storage });
+
 
 // Маршруты
 
