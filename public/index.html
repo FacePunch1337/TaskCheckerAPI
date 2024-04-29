@@ -9,10 +9,11 @@
   <input type="file" id="fileInput">
   <button id="uploadButton">Upload</button>
   
-  <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app.js"></script>
-  <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-storage.js"></script>
+  <!-- Вставляем Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-storage-compat.js"></script>
   <script>
-    // Initialize Firebase
+    // Инициализируем Firebase
     const firebaseConfig = {
       apiKey: "AIzaSyCnlcR-1pnqtuGD2WcAuTIk0EKbvFLpzro",
       authDomain: "taskcheker-39fd8.firebaseapp.com",
@@ -24,9 +25,9 @@
       measurementId: "G-88K82CEL5B"
     };
 
-    // Initialize Firebase
-    const app = firebase.initializeApp(firebaseConfig);
-    const storage = firebase.storage(app);
+    // Инициализируем Firebase
+    firebase.initializeApp(firebaseConfig);
+    const storage = firebase.storage();
 
     function uploadImage() {
       const fileInput = document.getElementById('fileInput');
@@ -49,7 +50,7 @@
       });
     }
 
-    // После инициализации Firebase добавим обработчик события для кнопки загрузки
+    // Добавляем обработчик события для кнопки загрузки после инициализации Firebase
     document.getElementById('uploadButton').addEventListener('click', uploadImage);
   </script>
 </body>
