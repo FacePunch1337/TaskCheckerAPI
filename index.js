@@ -1,29 +1,17 @@
 const express = require('express');
 const mongoose = require('mongoose');
 const User = require('./models/userModel.js');
-const admin = require('firebase-admin');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
-const api = require('./routes/api.js');
-const storage = require("./firebase.js");
-const storageRef = require("firebase/storage");
-const bucket = require("./firebase.js");
+const { storage } = require("./firebase.js"); // Импортируем объект storage из firebase.js
+const { v4: uuidv4 } = require('uuid'); // Импортируем функцию v4 из библиотеки uuid
 const app = express();
 const port = process.env.PORT || 8000;
 
-
-const multer = require('multer');
 const upload = multer();
 
 app.use(express.json());
-app.use("/api", api);
 app.use(express.urlencoded({ extended: false }));
-
-// Инициализация Firebase Admin SDK
-
-
-
-// Маршруты
 
 // Получить всех пользователей
 app.get('/users', async (req, res) => {
@@ -57,79 +45,53 @@ app.post('/users', async (req, res) => {
 
 // Получить пользователя по его ID
 app.get('/users/:userId', async (req, res) => {
-    try {
-      const userId = req.params.userId;
-      const user = await User.findById(userId);
-      if (!user) {
-        return res.status(404).json({ message: "Пользователь не найден" });
-      }
-      res.status(200).json(user);
-    } catch (error) {
-      res.status(500).json({ message: error.message });
-    }
-  });
-
-// Загрузить файл пользователя
-
-
-// Аутентификация пользователя
-app.post('/login', async (req, res) => {
   try {
-    const { username, password } = req.body;
-    // Находим пользователя по имени пользователя
-    const user = await User.findOne({ username });
+    const userId = req.params.userId;
+    const user = await User.findById(userId);
     if (!user) {
       return res.status(404).json({ message: "Пользователь не найден" });
     }
-    // Сравниваем предоставленный пароль с хэшированным паролем в базе данных
-    const passwordMatch = await bcrypt.compare(password, user.password);
-    if (!passwordMatch) {
-      return res.status(401).json({ message: "Неправильный пароль" });
-    }
-    // Аутентификация успешна, возвращаем данные пользователя
-    res.status(200).json({ message: "Успешная аутентификация", user });
+    res.status(200).json(user);
   } catch (error) {
-    console.error("Error during login:", error);
     res.status(500).json({ message: error.message });
   }
 });
 
 // Загрузить файл пользователя в Firestore
 app.post('/users/:userId/avatar', upload.single('avatar'), async (req, res) => {
-    try {
-      const userId = req.params.userId;
-      const user = await User.findById(userId);
-      if (!user) {
-        return res.status(404).json({ message: "Пользователь не найден" });
-      }
-      if (!req.file) {
-        return res.status(400).json({ message: "Файл не был загружен" });
-      }
-  
-      const avatarFile = req.file;
-      const imagePath = `users/${userId}/avatar/${avatarFile.originalname}`;
-  
-      // Загружаем файл в Firebase Storage
-      const file = bucket.file(imagePath);
-      await file.save(avatarFile.buffer, {
-        metadata: {
-          contentType: avatarFile.mimetype
-        }
-      });
-  
-      // Получаем URL загруженного файла
-      const imageUrl = `https://storage.googleapis.com/${bucket.name}/${imagePath}`;
-  
-      // Сохраняем URL в базе данных
-      user.avatar = imageUrl;
-      await user.save();
-  
-      res.status(200).json({ message: "Avatar uploaded successfully", imageUrl });
-    } catch (error) {
-      console.error("Error uploading avatar:", error);
-      res.status(500).json({ message: error.message });
+  try {
+    const userId = req.params.userId;
+    const user = await User.findById(userId);
+    if (!user) {
+      return res.status(404).json({ message: "Пользователь не найден" });
     }
-  });
+    if (!req.file) {
+      return res.status(400).json({ message: "Файл не был загружен" });
+    }
+
+    const avatarFile = req.file;
+    const fileName = `${uuidv4()}-${avatarFile.originalname}`; // Генерируем уникальное имя файла
+
+    const imagePath = `avatars/${userId}/${fileName}`;
+
+    // Загружаем файл в Firebase Storage из объекта storage
+    await storage.ref(imagePath).put(avatarFile.buffer, {
+      contentType: avatarFile.mimetype
+    });
+
+    // Получаем URL загруженного файла
+    const imageUrl = await storage.ref(imagePath).getDownloadURL();
+
+    // Сохраняем URL в базе данных
+    user.avatar = imageUrl;
+    await user.save();
+
+    res.status(200).json({ message: "Avatar uploaded successfully", imageUrl });
+  } catch (error) {
+    console.error("Error uploading avatar:", error);
+    res.status(500).json({ message: error.message });
+  }
+});
 
 // Подключение к MongoDB
 mongoose.connect('mongodb+srv://rezol1337:GVDGGnZDTVrT6zRi@cluster0.w3rkzvn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
