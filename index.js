@@ -3,7 +3,7 @@ const mongoose = require('mongoose');
 const User = require('./models/userModel.js');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
-const { storage } = require("./firebase.js"); // Импортируем объект storage из firebase.js
+const storage = require("./firebase.js"); // Импортируем объект storage из firebase.js
 const app = express();
 const port = process.env.PORT || 8000;
 
