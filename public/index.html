@@ -7,7 +7,7 @@
 </head>
 <body>
   <input type="file" id="fileInput">
-  <button onclick="uploadImage()">Upload</button>
+  <button id="uploadButton">Upload</button>
   
   <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app.js"></script>
   <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-storage.js"></script>
@@ -48,6 +48,9 @@
         alert('Произошла ошибка при загрузке файла');
       });
     }
+
+    // После инициализации Firebase добавим обработчик события для кнопки загрузки
+    document.getElementById('uploadButton').addEventListener('click', uploadImage);
   </script>
 </body>
 </html>
