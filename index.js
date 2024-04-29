@@ -12,7 +12,7 @@ const upload = multer();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, '../')));
+app.use(express.static(path.join(__dirname, './')));
 // Middleware для обслуживания статических файлов из папки "public"
 //app.use(express.static(path.join(__dirname, 'public')));
 
