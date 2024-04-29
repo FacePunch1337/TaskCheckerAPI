@@ -9,7 +9,25 @@
   <input type="file" id="fileInput">
   <button onclick="uploadImage()">Upload</button>
   
+  <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-app.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.0.2/firebase-storage.js"></script>
   <script>
+    // Initialize Firebase
+    const firebaseConfig = {
+      apiKey: "AIzaSyCnlcR-1pnqtuGD2WcAuTIk0EKbvFLpzro",
+      authDomain: "taskcheker-39fd8.firebaseapp.com",
+      databaseURL: "https://taskcheker-39fd8-default-rtdb.firebaseio.com",
+      projectId: "taskcheker-39fd8",
+      storageBucket: "taskcheker-39fd8.appspot.com",
+      messagingSenderId: "842129711807",
+      appId: "1:842129711807:web:2092c0d8bd462432b01c0a",
+      measurementId: "G-88K82CEL5B"
+    };
+
+    // Initialize Firebase
+    const app = firebase.initializeApp(firebaseConfig);
+    const storage = firebase.storage(app);
+
     function uploadImage() {
       const fileInput = document.getElementById('fileInput');
       const file = fileInput.files[0];
@@ -19,21 +37,15 @@
         return;
       }
 
-      const formData = new FormData();
-      formData.append('image', file);
+      const storageRef = storage.ref();
+      const imagesRef = storageRef.child('images/' + file.name);
 
-      fetch('/upload', {
-        method: 'POST',
-        body: formData
-      })
-      .then(response => response.json())
-      .then(data => {
-        alert(data.message);
-        console.log('URL загруженного изображения:', data.imageUrl);
-      })
-      .catch(error => {
-        console.error('Ошибка при загрузке изображения:', error);
-        alert('Произошла ошибка при загрузке изображения');
+      imagesRef.put(file).then((snapshot) => {
+        console.log('Uploaded a blob or file!', snapshot);
+        alert('Файл успешно загружен');
+      }).catch((error) => {
+        console.error('Error uploading file:', error);
+        alert('Произошла ошибка при загрузке файла');
       });
     }
   </script>
