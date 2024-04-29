@@ -4,8 +4,7 @@ const User = require('./models/userModel.js');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
-const storage = require("./firebase.js"); // Импортируем объект storage из firebase.js
-const path = require('path'); // Подключаем модуль path
+const { storage } = require("./firebase.js"); // Импортируем объект storage из firebase.js
 const app = express();
 const port = process.env.PORT || 8000;
 
@@ -13,9 +12,6 @@ const upload = multer();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, './public')));
-// Middleware для обслуживания статических файлов из папки "public"
-//app.use(express.static(path.join(__dirname, 'public')));
 
 // Получить всех пользователей
 app.get('/users', async (req, res) => {
@@ -97,12 +93,12 @@ app.post('/upload', upload.single('image'), async (req, res) => {
       const filePath = `images/${fileName}`;
   
       // Загружаем файл в Firebase Storage
-      await storage.ref(filePath).put(req.file.buffer, {
+      const fileUploadTask = await storage.ref(filePath).put(req.file.buffer, {
         contentType: req.file.mimetype,
       });
   
       // Получаем URL загруженного файла
-      const imageUrl = await storage.ref(filePath).getDownloadURL();
+      const imageUrl = await fileUploadTask.ref.getDownloadURL();
   
       res.status(200).json({ message: 'Файл успешно загружен', imageUrl });
     } catch (error) {
