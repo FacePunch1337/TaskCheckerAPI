@@ -11,6 +11,10 @@ const bucket = require("./firebase.js");
 const app = express();
 const port = process.env.PORT || 8000;
 
+
+const multer = require('multer');
+const upload = multer();
+
 app.use(express.json());
 app.use("/api", api);
 app.use(express.urlencoded({ extended: false }));
@@ -91,23 +95,23 @@ app.post('/login', async (req, res) => {
 });
 
 // Загрузить файл пользователя в Firestore
-app.post('/users/:userId/avatar', async (req, res) => {
+app.post('/users/:userId/avatar', upload.single('avatar'), async (req, res) => {
     try {
       const userId = req.params.userId;
       const user = await User.findById(userId);
       if (!user) {
         return res.status(404).json({ message: "Пользователь не найден" });
       }
-      if (!req.files || Object.keys(req.files).length === 0) {
+      if (!req.file) {
         return res.status(400).json({ message: "Файл не был загружен" });
       }
   
-      const avatarFile = req.files.avatar;
-      const imagePath = `users/${userId}/avatar/${avatarFile.name}`;
+      const avatarFile = req.file;
+      const imagePath = `users/${userId}/avatar/${avatarFile.originalname}`;
   
       // Загружаем файл в Firebase Storage
       const file = bucket.file(imagePath);
-      await file.save(avatarFile.data, {
+      await file.save(avatarFile.buffer, {
         metadata: {
           contentType: avatarFile.mimetype
         }
