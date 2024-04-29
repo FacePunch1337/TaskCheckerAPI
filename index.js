@@ -90,7 +90,7 @@ app.post('/users/:userId/upload', upload.single('image'), async (req, res) => {
       const fileName = `${uuidv4()}-${req.file.originalname}`;
       
       // Путь куда сохранить файл в Firebase Storage
-      const filePath = `images/${fileName}`;
+      const filePath = `avatars/${fileName}`;
   
       // Загружаем файл в Firebase Storage
       const fileUploadTask = await storage.ref(filePath).put(req.file.buffer, {
