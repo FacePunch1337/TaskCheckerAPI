@@ -18,7 +18,7 @@ const upload = multer();
 app.use(express.json());
 app.use("/api", api);
 app.use(express.urlencoded({ extended: false }));
-app.use(express.static(path.join(__dirname, 'public')));
+
 // Инициализация Firebase Admin SDK
 
 
