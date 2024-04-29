@@ -22,7 +22,7 @@
       const formData = new FormData();
       formData.append('image', file);
 
-      fetch('/users/:userId/avatar', {
+      fetch('/upload', {
         method: 'POST',
         body: formData
       })
