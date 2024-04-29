@@ -6,6 +6,8 @@ const bcrypt = require('bcrypt');
 const multer = require('multer');
 const api = require('./routes/api.js');
 const storage = require("./firebase.js");
+const storageRef = require("firebase/storage");
+const bucket = require("./firebase.js");
 const app = express();
 const port = process.env.PORT || 8000;
 
