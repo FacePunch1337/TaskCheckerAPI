@@ -108,7 +108,8 @@ app.post('/upload', upload.single('image'), async (req, res) => {
       console.error('Ошибка при загрузке файла:', error);
       res.status(500).json({ message: error.message });
     }
-  });
+});
+
 
 // Подключение к MongoDB
 mongoose.connect('mongodb+srv://rezol1337:GVDGGnZDTVrT6zRi@cluster0.w3rkzvn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
