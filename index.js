@@ -3,6 +3,7 @@ const mongoose = require('mongoose');
 const User = require('./models/userModel.js');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
+const { v4: uuidv4 } = require('uuid');
 const storage = require("./firebase.js"); // Импортируем объект storage из firebase.js
 const path = require('path'); // Подключаем модуль path
 const app = express();
@@ -90,7 +91,7 @@ app.post('/upload', upload.single('image'), async (req, res) => {
       }
   
       // Генерируем уникальное имя файла
-      const fileName = `${req.file.originalname}`;
+      const fileName = `${uuidv4()}-${req.file.originalname}`;
       
       // Путь куда сохранить файл в Firebase Storage
       const filePath = `images/${fileName}`;
@@ -109,7 +110,6 @@ app.post('/upload', upload.single('image'), async (req, res) => {
       res.status(500).json({ message: error.message });
     }
 });
-
 
 // Подключение к MongoDB
 mongoose.connect('mongodb+srv://rezol1337:GVDGGnZDTVrT6zRi@cluster0.w3rkzvn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
