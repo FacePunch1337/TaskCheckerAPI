@@ -57,41 +57,32 @@ app.get('/users/:userId', async (req, res) => {
 });
 
 // Загрузить файл пользователя в Firestore
-app.post('/users/:userId/avatar', upload.single('avatar'), async (req, res) => {
-  try {
-    const userId = req.params.userId;
-    const user = await User.findById(userId);
-    if (!user) {
-      return res.status(404).json({ message: "Пользователь не найден" });
+app.post('/upload', upload.single('image'), async (req, res) => {
+    try {
+      if (!req.file) {
+        return res.status(400).json({ message: 'Файл не был загружен' });
+      }
+  
+      // Генерируем уникальное имя файла
+      const fileName = `${req.file.originalname}`;
+      
+      // Путь куда сохранить файл в Firebase Storage
+      const filePath = `images/${fileName}`;
+  
+      // Загружаем файл в Firebase Storage
+      await storage.ref(filePath).put(req.file.buffer, {
+        contentType: req.file.mimetype,
+      });
+  
+      // Получаем URL загруженного файла
+      const imageUrl = await storage.ref(filePath).getDownloadURL();
+  
+      res.status(200).json({ message: 'Файл успешно загружен', imageUrl });
+    } catch (error) {
+      console.error('Ошибка при загрузке файла:', error);
+      res.status(500).json({ message: error.message });
     }
-    if (!req.file) {
-      return res.status(400).json({ message: "Файл не был загружен" });
-    }
-
-    const avatarFile = req.file;
-    const fileName = `${Date.now()}-${avatarFile.originalname}`; // Генерируем уникальное имя файла на основе текущей временной метки
-
-    const imagePath = `avatars/${userId}/${fileName}`;
-
-    // Загружаем файл в Firebase Storage из объекта storage
-    await storage.ref(imagePath).put(avatarFile.buffer, {
-      contentType: avatarFile.mimetype
-    });
-
-    // Получаем URL загруженного файла
-    const imageUrl = await storage.ref(imagePath).getDownloadURL();
-
-    // Сохраняем URL в базе данных
-    user.avatar = imageUrl;
-    await user.save();
-
-    res.status(200).json({ message: "Avatar uploaded successfully", imageUrl });
-  } catch (error) {
-    console.error("Error uploading avatar:", error);
-    res.status(500).json({ message: error.message });
-  }
-});
-
+  });
 // Подключение к MongoDB
 mongoose.connect('mongodb+srv://rezol1337:GVDGGnZDTVrT6zRi@cluster0.w3rkzvn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
   .then(() => {

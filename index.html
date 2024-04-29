@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Upload Image</title>
+</head>
+<body>
+  <input type="file" id="fileInput">
+  <button onclick="uploadImage()">Upload</button>
+  
+  <script>
+    function uploadImage() {
+      const fileInput = document.getElementById('fileInput');
+      const file = fileInput.files[0];
+
+      if (!file) {
+        alert('Выберите файл для загрузки');
+        return;
+      }
+
+      const formData = new FormData();
+      formData.append('image', file);
+
+      fetch('/upload', {
+        method: 'POST',
+        body: formData
+      })
+      .then(response => response.json())
+      .then(data => {
+        alert(data.message);
+        console.log('URL загруженного изображения:', data.imageUrl);
+      })
+      .catch(error => {
+        console.error('Ошибка при загрузке изображения:', error);
+        alert('Произошла ошибка при загрузке изображения');
+      });
+    }
+  </script>
+</body>
+</html>
