@@ -95,38 +95,29 @@ app.post('/login', async (req, res) => {
 });
 
 // Загрузить файл пользователя в Firestore
-app.post('/users/:userId/avatar', upload.single('avatar'), async (req, res) => {
+app.post('/upload', upload.single('image'), async (req, res) => {
     try {
-      const userId = req.params.userId;
-      const user = await User.findById(userId);
-      if (!user) {
-        return res.status(404).json({ message: "Пользователь не найден" });
-      }
       if (!req.file) {
-        return res.status(400).json({ message: "Файл не был загружен" });
+        return res.status(400).json({ message: 'Файл не был загружен' });
       }
   
-      const avatarFile = req.file;
-      const imagePath = `users/${userId}/avatar/${avatarFile.originalname}`;
+      // Генерируем уникальное имя файла
+      const fileName = `${req.file.originalname}`;
+      
+      // Путь куда сохранить файл в Firebase Storage
+      const filePath = `images/${fileName}`;
   
       // Загружаем файл в Firebase Storage
-      const file = bucket.file(imagePath);
-      await file.save(avatarFile.buffer, {
-        metadata: {
-          contentType: avatarFile.mimetype
-        }
+      await storage.ref(filePath).put(req.file.buffer, {
+        contentType: req.file.mimetype,
       });
   
       // Получаем URL загруженного файла
-      const imageUrl = `https://storage.googleapis.com/${bucket.name}/${imagePath}`;
+      const imageUrl = await storage.ref(filePath).getDownloadURL();
   
-      // Сохраняем URL в базе данных
-      user.avatar = imageUrl;
-      await user.save();
-  
-      res.status(200).json({ message: "Avatar uploaded successfully", imageUrl });
+      res.status(200).json({ message: 'Файл успешно загружен', imageUrl });
     } catch (error) {
-      console.error("Error uploading avatar:", error);
+      console.error('Ошибка при загрузке файла:', error);
       res.status(500).json({ message: error.message });
     }
   });
