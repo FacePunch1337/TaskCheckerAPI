@@ -16,7 +16,7 @@ const userSchema = mongoose.Schema(
             type: String,
             required: [true, "Please enter a password"]
         },
-        avatarPath: {
+        avatarURL: {
             type: String // Путь к аватару пользователя
         }
     },

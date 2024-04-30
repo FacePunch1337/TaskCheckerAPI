@@ -101,6 +101,8 @@ app.post('/upload', upload.single('image'), async (req, res) => {
   
       // Получаем URL загруженного файла
       const imageUrl = await fileUploadTask.ref.getDownloadURL();
+
+      user.avatarURL = imageUrl;
   
       res.status(200).json({ message: 'Файл успешно загружен', imageUrl });
     } catch (error) {
