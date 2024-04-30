@@ -26,7 +26,8 @@ app.get('/users', async (req, res) => {
 // Создать нового пользователя
 app.post('/users', async (req, res) => {
   try {
-    // Проверяем, существует ли уже пользователь с заданным именем
+
+    // Проверка существует ли уже пользователь с заданным именем
     const existingUser = await User.findOne({ username: req.body.username });
     if (existingUser) {
       return res.status(400).json({ message: "Пользователь с таким именем уже существует" });
@@ -36,7 +37,7 @@ app.post('/users', async (req, res) => {
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
     const user = await User.create({ username: req.body.username, email: req.body.email, password: hashedPassword });
 
-    // Аутентификация успешна, возвращаем данные пользователя, как в методе /login
+ 
     res.status(200).json({ message: "Успешная регистрация", user });
   } catch (error) {
     res.status(500).json({ message: error.message });
@@ -79,8 +80,8 @@ app.post('/login', async (req, res) => {
     }
   });
   
-// Загрузить файл пользователя в Firestore
-app.post('/users/:userId/upload', upload.single('image'), async (req, res) => {
+
+app.post('/upload', upload.single('image'), async (req, res) => {
     try {
       if (!req.file) {
         return res.status(400).json({ message: 'Файл не был загружен' });
