@@ -12,6 +12,7 @@ const upload = multer();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use('/upload')
 
 // Получить всех пользователей
 app.get('/users', async (req, res) => {
