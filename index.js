@@ -89,6 +89,9 @@ app.post('/login', async (req, res) => {
         return res.status(400).json({ message: 'Файл не был загружен' });
       }
   
+      // Получаем информацию о пользователе из запроса
+      const user = req.body.user;
+  
       // Генерируем уникальное имя файла
       const fileName = `${uuidv4()}-${req.file.originalname}`;
       
@@ -103,12 +106,13 @@ app.post('/login', async (req, res) => {
       // Получаем URL загруженного файла
       const imageUrl = await fileUploadTask.ref.getDownloadURL();
   
-      res.status(200).json({ message: 'Файл успешно загружен', imageUrl });
+      // Возвращаем данные пользователя и URL загруженного изображения
+      res.status(200).json({ message: 'Файл успешно загружен', user, imageUrl });
     } catch (error) {
       console.error('Ошибка при загрузке файла:', error);
       res.status(500).json({ message: error.message });
     }
-});
+  });
 
 // Подключение к MongoDB
 mongoose.connect('mongodb+srv://rezol1337:GVDGGnZDTVrT6zRi@cluster0.w3rkzvn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
