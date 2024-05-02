@@ -107,7 +107,7 @@ app.post('/login', async (req, res) => {
       const imageUrl = await fileUploadTask.ref.getDownloadURL();
   
       // Возвращаем данные пользователя и URL загруженного изображения
-      res.status(200).json({ message: 'Файл успешно загружен', user, imageUrl });
+      res.status(200).json({ message: 'Файл успешно загружен', imageUrl });
     } catch (error) {
       console.error('Ошибка при загрузке файла:', error);
       res.status(500).json({ message: error.message });

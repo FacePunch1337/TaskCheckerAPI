@@ -19,6 +19,7 @@ const userSchema = mongoose.Schema(
         avatarURL: {
             type: String // Путь к аватару пользователя
         }
+        
     },
     {
         timestamps: true
