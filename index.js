@@ -115,7 +115,7 @@ app.post('/login', async (req, res) => {
   });
 
   // Обновить URL аватара пользователя
-app.put('/users/:userId/avatar', async (req, res) => {
+app.put('/users/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
     const { avatarUrl } = req.body;
