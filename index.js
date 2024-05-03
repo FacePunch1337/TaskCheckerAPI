@@ -13,7 +13,7 @@ const upload = multer();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-const defaultAvatarURL = "https://firebasestorage.googleapis.com/v0/b/taskcheker-39fd8.appspot.com/o/avatars%2Faim.png?alt=media&token=cf521e83-7dfa-40f2-aeb5-b7e99896ee9b";
+const defaultAvatarURL = "https://firebasestorage.googleapis.com/v0/b/taskcheker-39fd8.appspot.com/o/avatars%2FdefaultAvatar.png?alt=media&token=edd86f64-41fa-4c51-9320-f41ebc99f78a";
 
 // Получить всех пользователей
 app.get('/users', async (req, res) => {
