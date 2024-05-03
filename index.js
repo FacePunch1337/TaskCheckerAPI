@@ -119,12 +119,11 @@ app.post('/login', async (req, res) => {
 
 // Обработчик для удаления изображения
 
-app.delete('/deleteAvatar', async (req, res) => {
+app.delete('/deleteAvatar/:fileName', async (req, res) => {
   try {
-    const avatarUrl = decodeURIComponent(req.query.avatarUrl); // Декодируем URL, если он содержит специальные символы
-    
+    const fileName = req.params.fileName;
     // Получаем ссылку на файл в Firebase Storage
-    const fileRef = storage.refFromURL(avatarUrl);
+    const fileRef = storage.ref("avatars/" + fileName);
     // Удаляем файл
     await fileRef.delete();
 
@@ -134,7 +133,6 @@ app.delete('/deleteAvatar', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-
 
 
 
