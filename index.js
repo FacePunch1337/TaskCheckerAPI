@@ -127,7 +127,7 @@ app.delete('/deleteAvatar/:fileName', async (req, res) => {
     //const fileRef = storage.refFromURL(avatarUrl);
     const bucketName = "gs://taskcheker-39fd8.appspot.com";
     // Удаляем файл
-    await  storage.bucket(bucketName).file("avatars/" + fileName).delete();
+    await  firebase.bucket(bucketName).file("avatars/" + fileName).delete();
 
     res.status(200).json({ message: "Аватар успешно удален" });
   } catch (error) {
