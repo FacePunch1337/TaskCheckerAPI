@@ -118,7 +118,7 @@ app.post('/login', async (req, res) => {
 
 
 // Обработчик для удаления изображения
-app.delete('/deleteAvatar', async (req, res) => {
+app.delete('/deleteAvatar/:avatarUrl', async (req, res) => {
     try {
         const avatarUrl = req.query.avatarUrl;
 
