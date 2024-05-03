@@ -133,8 +133,8 @@ app.delete('/deleteAvatar/:avatarUrl', async (req, res) => {
 
         res.status(200).json({ message: "Аватар успешно удален" });
     } catch (error) {
-        console.error('Ошибка при удалении аватара:', error);
-        res.status(500).json({ message: error.message });
+        console.error('Ошибка при удалении аватара:', error, fileName);
+        res.status(500).json({ message: error.message, fileName });
     }
 });
 
