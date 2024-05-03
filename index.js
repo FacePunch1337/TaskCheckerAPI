@@ -115,8 +115,7 @@ app.post('/login', async (req, res) => {
     }
   });
 
-  // Получение ссылки на хранилище
-
+ 
 
 // Обработчик для удаления изображения
 
@@ -125,7 +124,7 @@ app.delete('/deleteAvatar/:avatarUrl', async (req, res) => {
       const avatarUrl = req.params.avatarUrl;
 
       // Получаем имя файла из URL
-      const fileName = avatarUrl.split('/').pop();
+      const fileName = decodeURIComponent(avatarUrl).split('/').pop();
 
       // Путь к файлу в Firebase Storage
       const filePath = `avatars/${fileName}`;
@@ -138,6 +137,7 @@ app.delete('/deleteAvatar/:avatarUrl', async (req, res) => {
       res.status(500).json({ message: error.message });
   }
 });
+
 
   // Обновить данные пользователя
 app.put('/users/:userId', async (req, res) => {
