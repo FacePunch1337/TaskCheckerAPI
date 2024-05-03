@@ -121,13 +121,13 @@ app.post('/login', async (req, res) => {
 
 app.delete('/deleteAvatar/:avatarUrl', async (req, res) => {
   try {
-      const avatarUrl = req.params.avatarUrl;
+    const avatarUrl = req.params.avatarUrl;
 
-      // Получаем имя файла из URL
-      const fileName = decodeURIComponent(avatarUrl).split('/').pop();
+    // Декодируем URL и извлекаем имя файла
+    const fileName = decodeURIComponent(avatarUrl).split('/').pop();
 
-      // Путь к файлу в Firebase Storage
-      const filePath = `avatars/${fileName}`;
+    // Путь к файлу в Firebase Storage
+    const filePath = `avatars/${fileName}`;
 
       await storage.ref(filePath).delete();
 
