@@ -13,7 +13,7 @@ const upload = multer();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-const defaultAvatarURL = "https://firebasestorage.googleapis.com/v0/b/taskcheker-39fd8.appspot.com/o/avatars%2Faim.png?alt=media&token=8e868ede-de34-47b7-92de-e4b76bfd140a";
+const defaultAvatarURL = "https://firebasestorage.googleapis.com/v0/b/taskcheker-39fd8.appspot.com/o/avatars%2Faim.png?alt=media&token=cf521e83-7dfa-40f2-aeb5-b7e99896ee9b";
 
 // Получить всех пользователей
 app.get('/users', async (req, res) => {
@@ -113,6 +113,25 @@ app.post('/login', async (req, res) => {
       res.status(500).json({ message: error.message });
     }
   });
+
+  // Обновить URL аватара пользователя
+app.put('/users/:userId/avatar', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const { avatarUrl } = req.body;
+
+    // Находим пользователя по его ID и обновляем URL аватара
+    const updatedUser = await User.findByIdAndUpdate(userId, { avatarURL: avatarUrl }, { new: true });
+    if (!updatedUser) {
+      return res.status(404).json({ message: "Пользователь не найден" });
+    }
+
+    res.status(200).json({ message: "URL аватара успешно обновлен", user: updatedUser });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 
 // Подключение к MongoDB
 mongoose.connect('mongodb+srv://rezol1337:GVDGGnZDTVrT6zRi@cluster0.w3rkzvn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
