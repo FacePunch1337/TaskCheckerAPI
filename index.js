@@ -119,23 +119,24 @@ app.post('/login', async (req, res) => {
 
 
 // Обработчик для удаления изображения
+
 app.delete('/deleteAvatar/:avatarUrl', async (req, res) => {
-    try {
-        const avatarUrl = req.query.avatarUrl;
+  try {
+      const avatarUrl = req.params.avatarUrl;
 
-        // Получаем имя файла из URL
-        const fileName = avatarUrl.split('/').pop();
+      // Получаем имя файла из URL
+      const fileName = avatarUrl.split('/').pop();
 
-        // Путь к файлу в Firebase Storage
-        const filePath = `avatars/${fileName}`;
+      // Путь к файлу в Firebase Storage
+      const filePath = `avatars/${fileName}`;
 
-        await firebase.storage().bucket().file(filePath).delete();
+      await firebase.storage().bucket().file(filePath).delete();
 
-        res.status(200).json({ message: "Аватар успешно удален" });
-    } catch (error) {
-        console.error('Ошибка при удалении аватара:', error, fileName);
-        res.status(500).json({ message: error.message, fileName });
-    }
+      res.status(200).json({ message: "Аватар успешно удален" });
+  } catch (error) {
+      console.error('Ошибка при удалении аватара:', error);
+      res.status(500).json({ message: error.message });
+  }
 });
 
   // Обновить данные пользователя
