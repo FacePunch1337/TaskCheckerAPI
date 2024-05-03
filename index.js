@@ -123,13 +123,11 @@ app.delete('/deleteAvatar/:avatarUrl', async (req, res) => {
   try {
     const avatarUrl = req.params.avatarUrl;
 
-    // Декодируем URL и извлекаем имя файла
-    const fileName = decodeURIComponent(avatarUrl).split('/').pop();
+    const fileRef = storage.refFromURL(avatarUrl); 
 
-    // Путь к файлу в Firebase Storage
-    const filePath = `avatars/${fileName}`;
+   
 
-      await storage.ref(filePath).delete();
+      await fileRef.delete();
 
       res.status(200).json({ message: "Аватар успешно удален" });
   } catch (error) {
