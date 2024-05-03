@@ -121,13 +121,11 @@ app.post('/login', async (req, res) => {
 
 app.delete('/deleteAvatar/:fileName', async (req, res) => {
   try {
-    const avatarUrl = decodeURIComponent(req.params.avatarUrl); // Декодируем URL, если он содержит специальные символы
-    fileName = req.params.fileName;
+    const fileName = req.params.fileName;
     // Получаем ссылку на файл в Firebase Storage
-    const fileRef = storage.refFromURL(avatarUrl);
-    //const bucketName = "gs://taskcheker-39fd8.appspot.com";
+    const fileRef = storage.ref("avatars/" + fileName);
     // Удаляем файл
-    await storage.fileRef.file("avatars/" + fileName).delete();
+    await fileRef.delete();
 
     res.status(200).json({ message: "Аватар успешно удален" });
   } catch (error) {
