@@ -1,5 +1,6 @@
 const express = require('express');
 const mongoose = require('mongoose');
+const firebase = require('firebase-admin');
 const User = require('./models/userModel.js');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
@@ -128,7 +129,7 @@ app.delete('/deleteAvatar/:avatarUrl', async (req, res) => {
         // Путь к файлу в Firebase Storage
         const filePath = `avatars/${fileName}`;
 
-        await storage.ref(filePath).delete();
+        await firebase.storage().bucket().file(filePath).delete();
 
         res.status(200).json({ message: "Аватар успешно удален" });
     } catch (error) {
