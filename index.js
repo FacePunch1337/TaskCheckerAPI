@@ -93,7 +93,7 @@ app.post('/login', async (req, res) => {
       const user = req.body.user;
   
       // Генерируем уникальное имя файла
-      const fileName = `${uuidv4()}-${req.file.originalname}`;
+      const fileName = `${req.file.originalname}`;
       
       // Путь куда сохранить файл в Firebase Storage
       const filePath = `avatars/${fileName}`;
@@ -114,7 +114,7 @@ app.post('/login', async (req, res) => {
     }
   });
 
-  // Обновить URL аватара пользователя
+  // Обновить данные пользователя
 app.put('/users/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -126,7 +126,7 @@ app.put('/users/:userId', async (req, res) => {
       return res.status(404).json({ message: "Пользователь не найден" });
     }
 
-    res.status(200).json({ message: "URL аватара успешно обновлен", user: updatedUser });
+    res.status(200).json({ message: "Данные успешно обновлены", user: updatedUser });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
