@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 const defaultAvatarURL = "https://firebasestorage.googleapis.com/v0/b/taskcheker-39fd8.appspot.com/o/avatars%2FdefaultAvatar.png?alt=media&token=2dc441da-b359-4293-9796-81c838d2c2be";
-const defaultAvatarFilename = "defaultAvatar.png";
+const avatarFilename = "defaultAvatar.png";
 // Получить всех пользователей
 app.get('/users', async (req, res) => {
   try {
