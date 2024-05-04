@@ -105,7 +105,7 @@ app.post('/login', async (req, res) => {
         avatarFileName = `${uuidv4()}-${req.file.originalname}`;
         
         // Путь куда сохранить файл в Firebase Storage
-        const filePath = `avatars/${fileName}`;
+        const filePath = `avatars/${avatarFileName}`;
 
         // Загружаем файл в Firebase Storage
         const fileUploadTask = await storage.ref(filePath).put(req.file.buffer, {
