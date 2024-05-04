@@ -94,7 +94,7 @@ app.post('/login', async (req, res) => {
       const user = req.body.user;
   
       // Генерируем уникальное имя файла
-      const fileName = `${uuidv4()}+${req.file.originalname}`;
+      const fileName = `${uuidv4()}-${req.file.originalname}`;
       
       // Путь куда сохранить файл в Firebase Storage
       const filePath = `avatars/${fileName}`;
