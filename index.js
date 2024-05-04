@@ -39,7 +39,7 @@ app.post('/users', async (req, res) => {
 
     // Хеширование пароля перед сохранением в базу данных
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    const user = await User.create({ username: req.body.username, email: req.body.email, password: hashedPassword, avatarURL: defaultAvatarURL, avatarFilename: defaultAvatarFilename});
+    const user = await User.create({ username: req.body.username, email: req.body.email, password: hashedPassword, avatarURL: defaultAvatarURL, avatarFilename: avatarFilename});
 
     res.status(200).json({ message: "Успешная регистрация", user });
   } catch (error) {
