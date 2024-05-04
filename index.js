@@ -114,12 +114,7 @@ app.post('/login', async (req, res) => {
         // Получаем URL загруженного файла
         const imageUrl = await fileUploadTask.ref.getDownloadURL();
         
-        // Обновляем имя файла и URL в базе данных у пользователя
-        const userId = req.body.userId; // Предполагая, что у вас есть доступ к ID пользователя из запроса
-        const updatedUser = await User.findByIdAndUpdate(userId, {
-            avatarURL: imageUrl, // Обновляем URL загруженного файла
-            avatarFilename: fileName, // Обновляем имя файла
-        }, { new: true });
+       
 
         // Возвращаем данные пользователя и URL загруженного изображения
         res.status(200).json({ message: 'Файл успешно загружен', imageUrl, updatedUser });
@@ -153,22 +148,21 @@ app.delete('/deleteAvatar', async (req, res) => {
 
 
   // Обновить данные пользователя
-app.put('/users/:userId', async (req, res) => {
-  try {
-    const userId = req.params.userId;
-    const { avatarUrl } = req.body;
-
-    // Находим пользователя по его ID и обновляем URL аватара
-    const updatedUser = await User.findByIdAndUpdate(userId, { avatarURL: avatarUrl }, { new: true });
-    if (!updatedUser) {
-      return res.status(404).json({ message: "Пользователь не найден" });
+  app.put('/users/:userId', async (req, res) => {
+    try {
+      const userId = req.params.userId;
+  
+      // Обновляем все поля пользователя
+      const updatedUser = await User.findByIdAndUpdate(userId, req.body, { new: true });
+      if (!updatedUser) {
+        return res.status(404).json({ message: "Пользователь не найден" });
+      }
+  
+      res.status(200).json({ message: "Данные пользователя успешно обновлены", user: updatedUser });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
-
-    res.status(200).json({ message: "Данные успешно обновлены", user: updatedUser });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
+  });
 
 
 // Подключение к MongoDB
