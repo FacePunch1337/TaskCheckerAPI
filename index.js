@@ -132,13 +132,28 @@ app.post('/login', async (req, res) => {
 
 // Обработчик для удаления изображения
 
-app.delete('/deleteAvatar', async (req, res) => {
+/*app.delete('/deleteAvatar', async (req, res) => {
   try {
     const avatarUrl = decodeURIComponent(req.query.avatarUrl); // Декодируем URL, если он содержит специальные символы
     // Получаем ссылку на файл в Firebase Storage
     const fileRef = storage.refFromURL(avatarUrl);
+    
     // Удаляем файл
     await fileRef.delete();
+
+    res.status(200).json({ message: "Аватар успешно удален" });
+  } catch (error) {
+    console.error('Ошибка при удалении аватара:', error);
+    res.status(500).json({ message: error.message });
+  }
+});*/
+
+// Обработчик для удаления изображения
+app.delete('/deleteAvatar', async (req, res) => {
+  try {
+    const avatarFilename = req.query.avatarFilename; // Получаем имя файла из параметров запроса
+    const avatarRef = storage.ref(`avatars/${avatarFilename}`); // Формируем ссылку на файл в Firebase Storage
+    await avatarRef.delete(); // Удаляем файл
 
     res.status(200).json({ message: "Аватар успешно удален" });
   } catch (error) {
