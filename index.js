@@ -47,7 +47,7 @@ app.post('/users', async (req, res) => {
       email: req.body.email,
       password: hashedPassword,
       avatarURL: defaultAvatarURL,
-      avatarFilename: avatarFileName // Используем переданное имя файла
+      avatarFilename: avatarFileName, // Используем переданное имя файла
     });
 
     res.status(200).json({ message: "Успешная регистрация", user });
