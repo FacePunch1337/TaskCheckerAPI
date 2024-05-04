@@ -57,7 +57,6 @@ app.post('/users', async (req, res) => {
 });
 
 
-
 // Получить пользователя по его ID
 app.get('/users/:userId', async (req, res) => {
   try {
