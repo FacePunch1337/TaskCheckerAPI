@@ -15,7 +15,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
 const defaultAvatarURL = "https://firebasestorage.googleapis.com/v0/b/taskcheker-39fd8.appspot.com/o/avatars%2FdefaultAvatar.png?alt=media&token=2dc441da-b359-4293-9796-81c838d2c2be";
-
+const defaultAvatarFilename = "defaultAvatar.png";
 // Получить всех пользователей
 app.get('/users', async (req, res) => {
   try {
@@ -39,7 +39,7 @@ app.post('/users', async (req, res) => {
 
     // Хеширование пароля перед сохранением в базу данных
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    const user = await User.create({ username: req.body.username, email: req.body.email, password: hashedPassword, avatarURL: defaultAvatarURL, avatarFilename: "defaultAvatar.png"});
+    const user = await User.create({ username: req.body.username, email: req.body.email, password: hashedPassword, avatarURL: defaultAvatarURL, avatarFilename: defaultAvatarFilename});
 
     res.status(200).json({ message: "Успешная регистрация", user });
   } catch (error) {
