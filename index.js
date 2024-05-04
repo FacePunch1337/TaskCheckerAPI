@@ -39,7 +39,7 @@ app.post('/users', async (req, res) => {
 
     // Хеширование пароля перед сохранением в базу данных
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    const user = await User.create({ username: req.body.username, email: req.body.email, password: hashedPassword, avatarURL: defaultAvatarURL });
+    const user = await User.create({ username: req.body.username, email: req.body.email, password: hashedPassword, avatarURL: defaultAvatarURL, avatarFilename: "defaultAvatar.png"});
 
     res.status(200).json({ message: "Успешная регистрация", user });
   } catch (error) {
@@ -86,34 +86,36 @@ app.post('/login', async (req, res) => {
 
   app.post('/upload', upload.single('image'), async (req, res) => {
     try {
-      if (!req.file) {
-        return res.status(400).json({ message: 'Файл не был загружен' });
-      }
-  
-      // Получаем информацию о пользователе из запроса
-      const user = req.body.user;
-  
-      // Генерируем уникальное имя файла
-      const fileName = `${uuidv4()}-${req.file.originalname}`;
+        if (!req.file) {
+            return res.status(400).json({ message: 'Файл не был загружен' });
+        }
+
+        // Генерируем уникальное имя файла
+        const fileName = `${uuidv4()}-${req.file.originalname}`;
       
-      // Путь куда сохранить файл в Firebase Storage
-      const filePath = `avatars/${fileName}`;
-  
-      // Загружаем файл в Firebase Storage
-      const fileUploadTask = await storage.ref(filePath).put(req.file.buffer, {
-        contentType: req.file.mimetype,
-      });
-  
-      // Получаем URL загруженного файла
-      const imageUrl = await fileUploadTask.ref.getDownloadURL();
-  
-      // Возвращаем данные пользователя и URL загруженного изображения
-      res.status(200).json({ message: 'Файл успешно загружен', imageUrl });
+        // Путь куда сохранить файл в Firebase Storage
+        const filePath = `avatars/${fileName}`;
+
+        // Загружаем файл в Firebase Storage
+        const fileUploadTask = await storage.ref(filePath).put(req.file.buffer, {
+            contentType: req.file.mimetype,
+        });
+
+        // Получаем URL загруженного файла
+        const imageUrl = await fileUploadTask.ref.getDownloadURL();
+        
+        // Сохраняем имя файла в базе данных
+        const user = req.body.user;
+        await User.findByIdAndUpdate(user._id, { avatarFilename: fileName });
+
+        // Возвращаем данные пользователя и URL загруженного изображения
+        res.status(200).json({ message: 'Файл успешно загружен', imageUrl });
     } catch (error) {
-      console.error('Ошибка при загрузке файла:', error);
-      res.status(500).json({ message: error.message });
+        console.error('Ошибка при загрузке файла:', error);
+        res.status(500).json({ message: error.message });
     }
-  });
+});
+
 
  
 

@@ -18,7 +18,11 @@ const userSchema = mongoose.Schema(
         },
         avatarURL: {
             type: String // Путь к аватару пользователя
+        },
+        avatarFileName: {
+            type: String // Путь к аватару пользователя
         }
+        
         
     },
     {
