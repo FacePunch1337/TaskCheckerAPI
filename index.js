@@ -16,6 +16,7 @@ app.use(express.urlencoded({ extendsed: false }));
 
 const defaultAvatarURL = "https://firebasestorage.googleapis.com/v0/b/taskcheker-39fd8.appspot.com/o/avatars%2FdefaultAvatar.png?alt=media&token=2dc441da-b359-4293-9796-81c838d2c2be";
 const avatarFileName = "defaultAvatar.png";
+const _fileName = "file.png";
 
 // Получить всех пользователей
 app.get('/users', async (req, res) => {
@@ -103,7 +104,7 @@ app.post('/login', async (req, res) => {
 
         // Генерируем уникальное имя файла
         const fileName = `${uuidv4()}-${req.file.originalname}`;
-        
+        _fileName = fileName;
         // Путь куда сохранить файл в Firebase Storage
         const filePath = `avatars/${fileName}`;
 
@@ -156,7 +157,7 @@ app.put('/users/:userId', async (req, res) => {
     const { avatarUrl } = req.body;
     
     // Находим пользователя по его ID и обновляем URL аватара
-    const updatedUser = await User.findByIdAndUpdate(userId, { avatarURL: avatarUrl, avatarFilename: avatarFileName}, { new: true });
+    const updatedUser = await User.findByIdAndUpdate(userId, { avatarURL: avatarUrl, avatarFilename: _fileName}, { new: true });
     if (!updatedUser) {
       return res.status(404).json({ message: "Пользователь не найден" });
     }
