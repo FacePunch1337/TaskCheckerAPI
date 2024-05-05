@@ -117,7 +117,7 @@ app.post('/login', async (req, res) => {
         const imageUrl = await fileUploadTask.ref.getDownloadURL();
         
         
-       
+        User.avatarFilename = fileName;
 
         // Возвращаем данные пользователя и URL загруженного изображения
         res.status(200).json({ message: 'Файл успешно загружен', imageUrl, fileName});
@@ -171,16 +171,16 @@ app.delete('/deleteAvatar', async (req, res) => {
 
 
   // Обновить данные пользователя
-// Обновить данные пользователя
+
 app.put('/users/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
-    const { avatarUrl, avatarFileName } = req.body;
+    const { avatarUrl, avatarFilename } = req.body;
 
     // Находим пользователя по его ID и обновляем данные
     const updatedUser = await User.findByIdAndUpdate(userId, {
       avatarURL: avatarUrl,
-      avatarFilename: avatarFileName
+      avatarFilename: avatarFilename
     }, { new: true });
 
     if (!updatedUser) {
@@ -193,7 +193,7 @@ app.put('/users/:userId', async (req, res) => {
   }
 });
 
-  
+
 
 // Подключение к MongoDB
 mongoose.connect('mongodb+srv://rezol1337:GVDGGnZDTVrT6zRi@cluster0.w3rkzvn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
