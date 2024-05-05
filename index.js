@@ -171,23 +171,22 @@ app.delete('/deleteAvatar', async (req, res) => {
 
 
   // Обновить данные пользователя
-app.put('/users/:userId', async (req, res) => {
-  try {
-    const userId = req.params.userId;
-    const { avatarUrl } = req.body;
-    
-    // Находим пользователя по его ID и обновляем URL аватара
-    const updatedUser = await User.findByIdAndUpdate(userId, { avatarURL: avatarUrl, avatarFilename: User.avatarFilename}, { new: true });
-    if (!updatedUser) {
-      return res.status(404).json({ message: "Пользователь не найден" });
+  app.put('/users/:userId', async (req, res) => {
+    try {
+      const userId = req.params.userId;
+      const { avatarUrl, avatarFileName } = req.body; // Обновлено на avatarFileName, чтобы соответствовать клиентскому коду
+      // Находим пользователя по его ID и обновляем URL аватара
+      const updatedUser = await User.findByIdAndUpdate(userId, { avatarURL: avatarUrl, avatarFilename: avatarFileName }, { new: true });
+      if (!updatedUser) {
+        return res.status(404).json({ message: "Пользователь не найден" });
+      }
+  
+      res.status(200).json({ message: "Данные успешно обновлены", user: updatedUser });
+    } catch (error) {
+      res.status(500).json({ message: error.message });
     }
-
-    res.status(200).json({ message: "Данные успешно обновлены", user: updatedUser });
-  } catch (error) {
-    res.status(500).json({ message: error.message });
-  }
-});
-
+  });
+  
 
 // Подключение к MongoDB
 mongoose.connect('mongodb+srv://rezol1337:GVDGGnZDTVrT6zRi@cluster0.w3rkzvn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
