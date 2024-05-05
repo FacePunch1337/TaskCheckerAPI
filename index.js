@@ -117,7 +117,7 @@ app.post('/login', async (req, res) => {
         const imageUrl = await fileUploadTask.ref.getDownloadURL();
         
         
-        User.avatarFilename = fileName;
+       
 
         // Возвращаем данные пользователя и URL загруженного изображения
         res.status(200).json({ message: 'Файл успешно загружен', imageUrl, fileName});
