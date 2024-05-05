@@ -171,21 +171,28 @@ app.delete('/deleteAvatar', async (req, res) => {
 
 
   // Обновить данные пользователя
-  app.put('/users/:userId', async (req, res) => {
-    try {
-      const userId = req.params.userId;
-      const { avatarUrl, avatarFileName } = req.body; // Обновлено на avatarFileName, чтобы соответствовать клиентскому коду
-      // Находим пользователя по его ID и обновляем URL аватара
-      const updatedUser = await User.findByIdAndUpdate(userId, { avatarURL: avatarUrl, avatarFilename: avatarFileName }, { new: true });
-      if (!updatedUser) {
-        return res.status(404).json({ message: "Пользователь не найден" });
-      }
-  
-      res.status(200).json({ message: "Данные успешно обновлены", user: updatedUser });
-    } catch (error) {
-      res.status(500).json({ message: error.message });
+// Обновить данные пользователя
+app.put('/users/:userId', async (req, res) => {
+  try {
+    const userId = req.params.userId;
+    const { avatarUrl, avatarFileName } = req.body;
+
+    // Находим пользователя по его ID и обновляем данные
+    const updatedUser = await User.findByIdAndUpdate(userId, {
+      avatarURL: avatarUrl,
+      avatarFilename: avatarFileName
+    }, { new: true });
+
+    if (!updatedUser) {
+      return res.status(404).json({ message: "Пользователь не найден" });
     }
-  });
+
+    res.status(200).json({ message: "Данные успешно обновлены", user: updatedUser });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
   
 
 // Подключение к MongoDB
