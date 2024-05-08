@@ -220,19 +220,19 @@ app.post('/boards/', async (req, res) => {
   }
 });
 
-
 app.get('/boards/:owner', async (req, res) => {
   try {
     const owner = req.params.owner;
-    const board = await Board.findById(owner);
-    if (!board) {
-      return res.status(404).json({ message: "Доска не найдена" });
+    const boards = await Board.find({ owner: owner });
+    if (!boards || boards.length === 0) {
+      return res.status(404).json({ message: "Доски не найдены" });
     }
-    res.status(200).json(board);
+    res.status(200).json(boards);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
+
 
 // Подключение к MongoDB
 mongoose.connect('mongodb+srv://rezol1337:GVDGGnZDTVrT6zRi@cluster0.w3rkzvn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
