@@ -29,6 +29,16 @@ app.get('/users', async (req, res) => {
 });
 
 
+// Получить все доски
+app.get('/boards', async (req, res) => {
+  try {
+    const boards = await Board.find({});
+    res.status(200).json(boards);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 
 // Создать нового пользователя
 
@@ -188,6 +198,20 @@ app.put('/users/:userId', async (req, res) => {
     }
 
     res.status(200).json({ message: "Данные успешно обновлены", user: updatedUser });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Создать новую доску
+app.post('/boards', async (req, res) => {
+  try {
+    const { title } = req.body;
+
+    // Создание новой доски с указанием названия
+    const newBoard = await Board.create({ title });
+
+    res.status(201).json({ message: "Доска успешно создана", board: newBoard });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
