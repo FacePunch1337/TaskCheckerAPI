@@ -202,13 +202,13 @@ app.put('/users/:userId', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-// Создать новую доску
+
 app.post('/boards', async (req, res) => {
   try {
-    const { title } = req.body; // Получаем название доски из тела запроса
+    const { title, owner } = req.body; // Получаем название доски и владельца из тела запроса
 
-    // Создание новой доски с указанием названия
-    const newBoard = await Board.create({ title });
+    // Создаем новую доску с указанием названия и владельца
+    const newBoard = await Board.create({ title, owner });
 
     res.status(201).json({ message: "Доска успешно создана", board: newBoard });
   } catch (error) {
