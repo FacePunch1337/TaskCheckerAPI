@@ -5,11 +5,8 @@ const boardSchema = mongoose.Schema(
         title: {
             type: String,
             unique: true
-        },
-        owner: {
-            type: String,
-            unique: true
         }
+        
         
         
     }
