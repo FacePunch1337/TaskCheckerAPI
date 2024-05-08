@@ -202,11 +202,10 @@ app.put('/users/:userId', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-
 // Создать новую доску
 app.post('/boards', async (req, res) => {
   try {
-    const { title } = req.body;
+    const { title } = req.query; // Получаем название доски из параметра запроса
 
     // Создание новой доски с указанием названия
     const newBoard = await Board.create({ title });
@@ -216,6 +215,7 @@ app.post('/boards', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
 
 
 
