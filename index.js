@@ -205,7 +205,7 @@ app.put('/users/:userId', async (req, res) => {
 // Создать новую доску
 app.post('/boards', async (req, res) => {
   try {
-    const { title } = req.query; // Получаем название доски из параметра запроса
+    const { title } = req.body; // Получаем название доски из тела запроса
 
     // Создание новой доски с указанием названия
     const newBoard = await Board.create({ title });
