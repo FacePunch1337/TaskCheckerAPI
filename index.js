@@ -206,7 +206,7 @@ app.put('/users/:userId', async (req, res) => {
 
 app.post('/boards', async (req, res) => {
   try {
-    const { title, owner } = req.body; // Получаем название доски и владельца из тела запроса
+   
 
     const newBoard = await Board.create({
       title: req.body.title,
@@ -215,7 +215,7 @@ app.post('/boards', async (req, res) => {
     });
 
 
-    res.status(201).json({ message: "Доска успешно создана", board: newBoard });
+    res.status(201).json({ message: "Доска успешно создана", newBoard });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
