@@ -4,6 +4,9 @@ const boardSchema = mongoose.Schema(
     {
         title: {
             type: String
+        },
+        owner: {
+            type: String
         }
         
         
