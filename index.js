@@ -2,6 +2,7 @@ const express = require('express');
 const mongoose = require('mongoose');
 const firebase = require('firebase-admin');
 const User = require('./models/userModel.js');
+const Board = require('./models/boardModel.js');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
