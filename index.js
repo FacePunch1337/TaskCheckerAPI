@@ -209,7 +209,7 @@ app.post('/boards', async (req, res) => {
    
 
     const newBoard = await Board.create({
-      title: req.body.title,
+      title: req.body.title
     });
 
 
