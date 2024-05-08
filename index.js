@@ -210,7 +210,7 @@ app.post('/boards', async (req, res) => {
 
     const newBoard = await Board.create({
       title: req.body.title,
-      owner: req.body.userId
+      owner: req.body.owner
     });
 
 
