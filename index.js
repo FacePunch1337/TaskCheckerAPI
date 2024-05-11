@@ -233,7 +233,7 @@ app.get('/boards/:owner', async (req, res) => {
   }
 });
 
-app.get('/boards/:boardId', async (req, res) => {
+app.get('/board/:boardId', async (req, res) => {
   try {
     const boardId = req.params.boardId;
     const boards = await Board.find({ boardId: boardId });
