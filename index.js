@@ -240,7 +240,7 @@ app.get('/board/:boardId', async (req, res) => {
     if (!board) {
       return res.status(404).json({ message: "Доска не найдена" });
     }
-    res.status(200).json(boards);
+    res.status(200).json(board);
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
