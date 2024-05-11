@@ -236,7 +236,7 @@ app.get('/boards/:owner', async (req, res) => {
 app.get('/board/:boardId', async (req, res) => {
   try {
     const boardId = req.params.boardId;
-    const board = await Board.findOne({ boardId: boardId });
+    const board = await Board.findById({ boardId: boardId });
     if (!board) {
       return res.status(404).json({ message: "Доска не найдена" });
     }
