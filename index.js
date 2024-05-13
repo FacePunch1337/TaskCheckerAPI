@@ -210,7 +210,12 @@ app.post('/boards/', async (req, res) => {
 
     const newBoard = await Board.create({
       title: req.body.title,
-      owner: req.body.owner
+      owner: req.body.owner,
+      columns: [
+        { title: "Backlog", cards: [] },
+        { title: "InProgress", cards: [] },
+        { title: "Release", cards: [] }
+      ]
     });
 
 
