@@ -1,5 +1,18 @@
 const mongoose = require('mongoose');
 
+// Схема для карточек
+const cardSchema = mongoose.Schema({
+    title: String,
+   
+});
+
+// Схема для столбцов
+const columnSchema = mongoose.Schema({
+    title: String,
+    cards: [cardSchema],
+   
+});
+
 const boardSchema = mongoose.Schema(
     {
         title: {
@@ -7,7 +20,8 @@ const boardSchema = mongoose.Schema(
         },
         owner: {
             type: String
-        }
+        },
+        columns: [columnSchema],
         
         
         
