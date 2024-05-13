@@ -247,6 +247,68 @@ app.get('/board/:boardId', async (req, res) => {
 });
 
 
+app.post('/boards/:boardId/columns', async (req, res) => {
+  try {
+    const boardId = req.params.boardId;
+    const board = await Board.findById(boardId);
+    if (!board) {
+      return res.status(404).json({ message: "Доска не найдена" });
+    }
+
+    // Создаем новую колонку
+    const newColumn = {
+      title: req.body.title,
+      cards: []
+      // Можете добавить другие поля колонки, если нужно
+    };
+
+    // Добавляем новую колонку в массив колонок доски
+    board.columns.push(newColumn);
+
+    // Сохраняем изменения в базе данных
+    await board.save();
+
+    res.status(201).json({ message: "Колонка успешно добавлена", newColumn });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.post('/boards/:boardId/columns/:columnId/cards', async (req, res) => {
+  try {
+    const boardId = req.params.boardId;
+    const columnId = req.params.columnId;
+
+    // Находим доску по её ID
+    const board = await Board.findById(boardId);
+    if (!board) {
+      return res.status(404).json({ message: "Доска не найдена" });
+    }
+
+    // Находим колонку по её ID
+    const column = board.columns.id(columnId);
+    if (!column) {
+      return res.status(404).json({ message: "Колонка не найдена" });
+    }
+
+    // Создаем новую карточку
+    const newCard = {
+      title: req.body.title,
+      // Можете добавить другие поля карточки, если нужно
+    };
+
+    // Добавляем новую карточку в массив карточек колонки
+    column.cards.push(newCard);
+
+    // Сохраняем изменения в базе данных
+    await board.save();
+
+    res.status(201).json({ message: "Карточка успешно добавлена", newCard });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // Подключение к MongoDB
 mongoose.connect('mongodb+srv://rezol1337:GVDGGnZDTVrT6zRi@cluster0.w3rkzvn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
   .then(() => {
