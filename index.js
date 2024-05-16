@@ -204,7 +204,7 @@ app.put('/users/:userId', async (req, res) => {
   }
 });
 
-app.post('/boards/', async (req, res) => {
+app.post('/boards', async (req, res) => {
   try {
 
 
