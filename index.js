@@ -204,7 +204,7 @@ app.put('/users/:userId', async (req, res) => {
   }
 });
 
-app.post('/boards', async (req, res) => {
+app.post('/boards/', async (req, res) => {
   try {
 
 
@@ -313,6 +313,56 @@ app.post('/boards/:boardId/columns/:columnId/cards', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
+
+// Перемещение карточки между колонками
+app.put('/boards/:boardId/columns/:fromColumnId/cards/:cardId/move/:toColumnId', async (req, res) => {
+  try {
+    const boardId = req.params.boardId;
+    const fromColumnId = req.params.fromColumnId;
+    const toColumnId = req.params.toColumnId; // Получаем id столбца, в который нужно переместить карточку
+    const cardId = req.params.cardId;
+
+    // Находим доску по её ID
+    const board = await Board.findById(boardId);
+    if (!board) {
+      return res.status(404).json({ message: "Доска не найдена" });
+    }
+
+    // Находим колонку, из которой нужно переместить карточку
+    const fromColumn = board.columns.id(fromColumnId);
+    if (!fromColumn) {
+      return res.status(404).json({ message: "Исходная колонка не найдена" });
+    }
+
+    // Находим колонку, в которую нужно переместить карточку
+    const toColumn = board.columns.id(toColumnId);
+    if (!toColumn) {
+      return res.status(404).json({ message: "Целевая колонка не найдена" });
+    }
+
+    // Находим карточку, которую нужно переместить
+    const card = fromColumn.cards.id(cardId);
+    if (!card) {
+      return res.status(404).json({ message: "Карточка не найдена" });
+    }
+
+    // Удаляем карточку из исходной колонки
+    fromColumn.cards.pull(card);
+
+    // Добавляем карточку в целевую колонку
+    toColumn.cards.push(card);
+
+    // Сохраняем изменения в базе данных
+    await board.save();
+
+    res.status(200).json({ message: "Карточка успешно перемещена", card });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
 
 // Подключение к MongoDB
 mongoose.connect('mongodb+srv://rezol1337:GVDGGnZDTVrT6zRi@cluster0.w3rkzvn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
