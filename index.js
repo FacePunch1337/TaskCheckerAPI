@@ -320,47 +320,50 @@ app.put('/boards/:boardId/columns/:fromColumnId/cards/:cardId/move/:toColumnId',
   try {
     const boardId = req.params.boardId;
     const fromColumnId = req.params.fromColumnId;
-    const toColumnId = req.params.toColumnId; // Получаем id столбца, в который нужно переместить карточку
+    const toColumnId = req.params.toColumnId;
     const cardId = req.params.cardId;
 
-    // Находим доску по её ID
-    const board = await Board.findById(boardId);
+    const board = await Board.findById(boardId).exec();
     if (!board) {
       return res.status(404).json({ message: "Доска не найдена" });
     }
+    console.log("Board:", board);
 
-    // Находим колонку, из которой нужно переместить карточку
     const fromColumn = board.columns.id(fromColumnId);
     if (!fromColumn) {
       return res.status(404).json({ message: "Исходная колонка не найдена" });
     }
+    console.log("FromColumn:", fromColumn);
 
-    // Находим колонку, в которую нужно переместить карточку
     const toColumn = board.columns.id(toColumnId);
     if (!toColumn) {
       return res.status(404).json({ message: "Целевая колонка не найдена" });
     }
+    console.log("ToColumn:", toColumn);
 
-    // Находим карточку, которую нужно переместить
     const card = fromColumn.cards.id(cardId);
     if (!card) {
       return res.status(404).json({ message: "Карточка не найдена" });
     }
+    console.log("Card:", card);
 
-    // Удаляем карточку из исходной колонки
     fromColumn.cards.pull(card);
-
-    // Добавляем карточку в целевую колонку
     toColumn.cards.push(card);
 
-    // Сохраняем изменения в базе данных
-    await board.save();
+    try {
+      await board.save();
+    } catch (saveError) {
+      console.error("Error saving board:", saveError);
+      return res.status(500).json({ message: saveError.message });
+    }
 
     res.status(200).json({ message: "Карточка успешно перемещена", card });
   } catch (error) {
+    console.error("Error moving card:", error);
     res.status(500).json({ message: error.message });
   }
 });
+
 
 
 
