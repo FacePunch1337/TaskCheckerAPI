@@ -13,11 +13,10 @@ const port = process.env.PORT || 8000;
 const upload = multer();
 
 app.use(express.json());
-app.use(express.urlencoded({ extendsed: false }));
+app.use(express.urlencoded({ extended: false }));
 
 const defaultAvatarURL = "https://firebasestorage.googleapis.com/v0/b/taskcheker-39fd8.appspot.com/o/avatars%2FdefaultAvatar.png?alt=media&token=2dc441da-b359-4293-9796-81c838d2c2be";
 const avatarFileName = "defaultAvatar.png";
-
 
 // Получить всех пользователей
 app.get('/users', async (req, res) => {
@@ -29,7 +28,6 @@ app.get('/users', async (req, res) => {
   }
 });
 
-
 // Получить все доски
 app.get('/boards', async (req, res) => {
   try {
@@ -40,9 +38,7 @@ app.get('/boards', async (req, res) => {
   }
 });
 
-
 // Создать нового пользователя
-
 app.post('/users', async (req, res) => {
   try {
     // Проверка существует ли уже пользователь с заданным именем
@@ -53,7 +49,7 @@ app.post('/users', async (req, res) => {
 
     // Хеширование пароля перед сохранением в базу данных
     const hashedPassword = await bcrypt.hash(req.body.password, 10);
-    
+
     // Создание пользователя с указанием имени файла аватара
     const user = await User.create({
       username: req.body.username,
@@ -68,7 +64,6 @@ app.post('/users', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-
 
 // Получить пользователя по его ID
 app.get('/users/:userId', async (req, res) => {
@@ -86,78 +81,53 @@ app.get('/users/:userId', async (req, res) => {
 
 // Аутентификация пользователя
 app.post('/login', async (req, res) => {
-    try {
-      const { username, password } = req.body;
-      // Находим пользователя по имени пользователя
-      const user = await User.findOne({ username });
-      if (!user) {
-        return res.status(404).json({ message: "Пользователь не найден" });
-      }
-      // Сравниваем предоставленный пароль с хэшированным паролем в базе данных
-      const passwordMatch = await bcrypt.compare(password, user.password);
-      if (!passwordMatch) {
-        return res.status(401).json({ message: "Неправильный пароль" });
-      }
-      // Аутентификация успешна, возвращаем данные пользователя
-      res.status(200).json({ message: "Успешная аутентификация", user });
-    } catch (error) {
-      console.error("Error during login:", error);
-      res.status(500).json({ message: error.message });
-    }
-  });
-  
-
-  app.post('/upload', upload.single('image'), async (req, res) => {
-    try {
-        if (!req.file) {
-            return res.status(400).json({ message: 'Файл не был загружен' });
-        }
-
-        // Генерируем уникальное имя файла
-        const fileName = `${uuidv4()}-${req.file.originalname}`;
-        
-        // Путь куда сохранить файл в Firebase Storage
-        const filePath = `avatars/${fileName}`;
-
-        // Загружаем файл в Firebase Storage
-        const fileUploadTask = await storage.ref(filePath).put(req.file.buffer, {
-            contentType: req.file.mimetype,
-        });
-
-        // Получаем URL загруженного файла
-        const imageUrl = await fileUploadTask.ref.getDownloadURL();
-        
-        
-        User.avatarFilename = fileName;
-
-        // Возвращаем данные пользователя и URL загруженного изображения
-        res.status(200).json({ message: 'Файл успешно загружен', imageUrl, fileName});
-    } catch (error) {
-        console.error('Ошибка при загрузке файла:', error);
-        res.status(500).json({ message: error.message });
-    }
-});
-
-
- 
-
-// Обработчик для удаления изображения
-
-/*app.delete('/deleteAvatar', async (req, res) => {
   try {
-    const avatarUrl = decodeURIComponent(req.query.avatarUrl); // Декодируем URL, если он содержит специальные символы
-    // Получаем ссылку на файл в Firebase Storage
-    const fileRef = storage.refFromURL(avatarUrl);
-    
-    // Удаляем файл
-    await fileRef.delete();
-
-    res.status(200).json({ message: "Аватар успешно удален" });
+    const { username, password } = req.body;
+    // Находим пользователя по имени пользователя
+    const user = await User.findOne({ username });
+    if (!user) {
+      return res.status(404).json({ message: "Пользователь не найден" });
+    }
+    // Сравниваем предоставленный пароль с хэшированным паролем в базе данных
+    const passwordMatch = await bcrypt.compare(password, user.password);
+    if (!passwordMatch) {
+      return res.status(401).json({ message: "Неправильный пароль" });
+    }
+    // Аутентификация успешна, возвращаем данные пользователя
+    res.status(200).json({ message: "Успешная аутентификация", user });
   } catch (error) {
-    console.error('Ошибка при удалении аватара:', error);
+    console.error("Error during login:", error);
     res.status(500).json({ message: error.message });
   }
-});*/
+});
+
+// Загрузка файла аватара
+app.post('/upload', upload.single('image'), async (req, res) => {
+  try {
+    if (!req.file) {
+      return res.status(400).json({ message: 'Файл не был загружен' });
+    }
+
+    // Генерируем уникальное имя файла
+    const fileName = `${uuidv4()}-${req.file.originalname}`;
+
+    // Путь куда сохранить файл в Firebase Storage
+    const filePath = `avatars/${fileName}`;
+
+    // Загружаем файл в Firebase Storage
+    const fileUploadTask = await storage.ref(filePath).put(req.file.buffer, {
+      contentType: req.file.mimetype,
+    });
+
+    // Получаем URL загруженного файла
+    const imageUrl = await fileUploadTask.ref.getDownloadURL();
+
+    res.status(200).json({ message: 'Файл успешно загружен', imageUrl, fileName });
+  } catch (error) {
+    console.error('Ошибка при загрузке файла:', error);
+    res.status(500).json({ message: error.message });
+  }
+});
 
 // Обработчик для удаления изображения
 app.delete('/deleteAvatar', async (req, res) => {
@@ -166,7 +136,7 @@ app.delete('/deleteAvatar', async (req, res) => {
 
     // Получаем ссылку на файл в Firebase Storage
     const fileRef = storage.ref('avatars/' + avatarFileName);
-    
+
     // Удаляем файл
     await fileRef.delete();
 
@@ -177,12 +147,7 @@ app.delete('/deleteAvatar', async (req, res) => {
   }
 });
 
-
-
-
-
-  // Обновить данные пользователя
-
+// Обновить данные пользователя
 app.put('/users/:userId', async (req, res) => {
   try {
     const userId = req.params.userId;
@@ -204,10 +169,9 @@ app.put('/users/:userId', async (req, res) => {
   }
 });
 
+// Создание новой доски
 app.post('/boards/', async (req, res) => {
   try {
-
-
     const newBoard = await Board.create({
       title: req.body.title,
       owner: req.body.owner,
@@ -218,13 +182,13 @@ app.post('/boards/', async (req, res) => {
       ]
     });
 
-
     res.status(201).json({ message: "Доска успешно создана", newBoard });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
 
+// Получить доски по владельцу
 app.get('/boards/:owner', async (req, res) => {
   try {
     const owner = req.params.owner;
@@ -238,6 +202,7 @@ app.get('/boards/:owner', async (req, res) => {
   }
 });
 
+// Получить доску по ID
 app.get('/board/:boardId', async (req, res) => {
   try {
     const boardId = req.params.boardId;
@@ -251,7 +216,7 @@ app.get('/board/:boardId', async (req, res) => {
   }
 });
 
-
+// Добавление новой колонки
 app.post('/boards/:boardId/columns', async (req, res) => {
   try {
     const boardId = req.params.boardId;
@@ -264,7 +229,6 @@ app.post('/boards/:boardId/columns', async (req, res) => {
     const newColumn = {
       title: req.body.title,
       cards: []
-      // Можете добавить другие поля колонки, если нужно
     };
 
     // Добавляем новую колонку в массив колонок доски
@@ -279,6 +243,7 @@ app.post('/boards/:boardId/columns', async (req, res) => {
   }
 });
 
+// Добавление новой карточки в колонку
 app.post('/boards/:boardId/columns/:columnId/cards', async (req, res) => {
   try {
     const { boardId, columnId } = req.params;
@@ -298,7 +263,6 @@ app.post('/boards/:boardId/columns/:columnId/cards', async (req, res) => {
     // Создаем новую карточку
     const newCard = {
       title: req.body.title
-      // cardId не нужен, _id создастся автоматически
     };
 
     // Добавляем новую карточку в массив карточек колонки
@@ -316,39 +280,30 @@ app.post('/boards/:boardId/columns/:columnId/cards', async (req, res) => {
   }
 });
 
-
-
 // Перемещение карточки между колонками
 app.put('/boards/:boardId/columns/:fromColumnId/cards/:cardId/move/:toColumnId', async (req, res) => {
   try {
-    const boardId = req.params.boardId;
-    const fromColumnId = req.params.fromColumnId;
-    const toColumnId = req.params.toColumnId;
-    const cardId = req.params.cardId;
+    const { boardId, fromColumnId, toColumnId, cardId } = req.params;
 
     const board = await Board.findById(boardId).exec();
     if (!board) {
       return res.status(404).json({ message: "Доска не найдена" });
     }
-    console.log("Board:", board);
 
     const fromColumn = board.columns.id(fromColumnId);
     if (!fromColumn) {
       return res.status(404).json({ message: "Исходная колонка не найдена" });
     }
-    console.log("FromColumn:", fromColumn);
 
     const toColumn = board.columns.id(toColumnId);
     if (!toColumn) {
       return res.status(404).json({ message: "Целевая колонка не найдена" });
     }
-    console.log("ToColumn:", toColumn);
 
     const card = fromColumn.cards.id(cardId);
     if (!card) {
       return res.status(404).json({ message: "Карточка не найдена" });
     }
-    console.log("Card:", card);
 
     fromColumn.cards.pull(card);
     toColumn.cards.push(card);
@@ -366,9 +321,6 @@ app.put('/boards/:boardId/columns/:fromColumnId/cards/:cardId/move/:toColumnId',
     res.status(500).json({ message: error.message });
   }
 });
-
-
-
 
 // Подключение к MongoDB
 mongoose.connect('mongodb+srv://rezol1337:GVDGGnZDTVrT6zRi@cluster0.w3rkzvn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
