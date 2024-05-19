@@ -299,6 +299,7 @@ app.post('/boards/:boardId/columns/:columnId/cards', async (req, res) => {
     // Создаем новую карточку
     const newCard = {
       title: req.body.title,
+      cardId: req.body.cardId
       // Можете добавить другие поля карточки, если нужно
     };
 
