@@ -281,8 +281,7 @@ app.post('/boards/:boardId/columns', async (req, res) => {
 
 app.post('/boards/:boardId/columns/:columnId/cards', async (req, res) => {
   try {
-    const boardId = req.params.boardId;
-    const columnId = req.params.columnId;
+    const { boardId, columnId } = req.params;
 
     // Находим доску по её ID
     const board = await Board.findById(boardId);
@@ -298,9 +297,8 @@ app.post('/boards/:boardId/columns/:columnId/cards', async (req, res) => {
 
     // Создаем новую карточку
     const newCard = {
-      title: req.body.title,
-      cardId: req.body.cardId
-      // Можете добавить другие поля карточки, если нужно
+      title: req.body.title
+      // cardId не нужен, _id создастся автоматически
     };
 
     // Добавляем новую карточку в массив карточек колонки
@@ -309,11 +307,15 @@ app.post('/boards/:boardId/columns/:columnId/cards', async (req, res) => {
     // Сохраняем изменения в базе данных
     await board.save();
 
-    res.status(201).json({ message: "Карточка успешно добавлена", newCard });
+    // Находим только что добавленную карточку по её ID (последний элемент массива)
+    const addedCard = column.cards[column.cards.length - 1];
+
+    res.status(201).json({ message: "Карточка успешно добавлена", newCard: addedCard });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
+
 
 
 // Перемещение карточки между колонками
