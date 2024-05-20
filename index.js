@@ -78,9 +78,9 @@ app.get('/users/:userId', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-app.get('/users/findByUsername', async (req, res) => {
+app.post('/users/findByUsername', async (req, res) => {
   try {
-    const username = req.query.username; // Используем req.query для получения параметра из строки запроса
+    const username = req.body.username; // Используем req.body для получения параметра из тела запроса
     const user = await User.findOne({ username: username });
     if (!user) {
       return res.status(404).json({ message: "Пользователь не найден" });
@@ -90,6 +90,7 @@ app.get('/users/findByUsername', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
 
 // Аутентификация пользователя
 app.post('/login', async (req, res) => {
