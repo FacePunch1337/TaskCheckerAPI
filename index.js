@@ -179,7 +179,8 @@ app.post('/boards/', async (req, res) => {
         { title: "Backlog", cards: [] },
         { title: "InProgress", cards: [] },
         { title: "Release", cards: [] }
-      ]
+      ],
+      members: req.body.members || []  // Инициализируем массив участников
     });
 
     res.status(201).json({ message: "Доска успешно создана", newBoard });
