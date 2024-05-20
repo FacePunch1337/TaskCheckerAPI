@@ -81,7 +81,7 @@ app.get('/users/:userId', async (req, res) => {
 
 app.post('/users/findByUsername', async (req, res) => {
   try {
-    const username = req.query.username; 
+    const username = req.body.username; 
     const user = await User.findOne({ username: username });
     if (!user) {
       return res.status(404).json({ message: "Пользователь не найден" });
