@@ -355,6 +355,59 @@ app.delete('/boards/:boardId/columns/:columnId/cards/:cardId', async (req, res) 
   }
 });
 
+// Добавление нового участника
+app.post('/boards/:boardId/members', async (req, res) => {
+  try {
+    const boardId = req.params.boardId;
+    const { userId } = req.body;
+
+    // Находим доску по её ID
+    const board = await Board.findById(boardId);
+    if (!board) {
+      return res.status(404).json({ message: "Доска не найдена" });
+    }
+
+    // Проверяем, существует ли уже такой участник в списке участников
+    const existingMember = board.members.find(member => member.userId === userId);
+    if (existingMember) {
+      return res.status(400).json({ message: "Участник уже добавлен в доску" });
+    }
+
+    // Добавляем нового участника в список участников доски
+    board.members.push({ userId });
+
+    // Сохраняем изменения в базе данных
+    await board.save();
+
+    res.status(201).json({ message: "Участник успешно добавлен в доску" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+// Поиск участника по id
+app.get('/boards/:boardId/members/:memberId', async (req, res) => {
+  try {
+    const boardId = req.params.boardId;
+    const memberId = req.params.memberId;
+
+    // Находим доску по её ID
+    const board = await Board.findById(boardId);
+    if (!board) {
+      return res.status(404).json({ message: "Доска не найдена" });
+    }
+
+    // Находим участника по его ID
+    const member = board.members.find(member => member.userId === memberId);
+    if (!member) {
+      return res.status(404).json({ message: "Участник не найден в доске" });
+    }
+
+    res.status(200).json({ message: "Участник найден", member });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 // Подключение к MongoDB
 mongoose.connect('mongodb+srv://rezol1337:GVDGGnZDTVrT6zRi@cluster0.w3rkzvn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
