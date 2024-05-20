@@ -356,11 +356,10 @@ app.delete('/boards/:boardId/columns/:columnId/cards/:cardId', async (req, res) 
   }
 });
 
-// Добавление нового участника
-app.post('/boards/:boardId/members', async (req, res) => {
+// Добавление нового участника по его ID
+app.post('/boards/:boardId/members/:memberId', async (req, res) => {
   try {
-    const boardId = req.params.boardId;
-    const { userId } = req.body;
+    const { boardId, memberId } = req.params;
 
     // Находим доску по её ID
     const board = await Board.findById(boardId);
@@ -369,13 +368,13 @@ app.post('/boards/:boardId/members', async (req, res) => {
     }
 
     // Проверяем, существует ли уже такой участник в списке участников
-    const existingMember = board.members.find(member => member.userId === userId);
+    const existingMember = board.members.find(member => member.userId === memberId);
     if (existingMember) {
       return res.status(400).json({ message: "Участник уже добавлен в доску" });
     }
 
     // Добавляем нового участника в список участников доски
-    board.members.push({ userId });
+    board.members.push({ userId: memberId });
 
     // Сохраняем изменения в базе данных
     await board.save();
@@ -385,6 +384,7 @@ app.post('/boards/:boardId/members', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
 
 // Поиск участника по id
 app.get('/boards/:boardId/members/:memberId', async (req, res) => {
