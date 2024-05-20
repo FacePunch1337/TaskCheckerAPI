@@ -186,23 +186,26 @@ app.put('/users/:userId', async (req, res) => {
 // Создание новой доски
 app.post('/boards/', async (req, res) => {
   try {
-    const newBoard = await Board.create({
-      title: req.body.title,
-      owner: req.body.owner,
-      columns: [
-        { title: "Backlog", cards: [] },
-        { title: "InProgress", cards: [] },
-        { title: "Release", cards: [] }
-      ],
-      members: req.body.members || []  // Инициализируем массив участников
-    });
+      // Создаем массив участников и добавляем владельца
+      const members = [{ userId: req.body.owner }, ...(req.body.members || [])];
 
-    res.status(201).json({ message: "Доска успешно создана", newBoard });
+      // Создаем новую доску с добавленным владельцем в массив участников
+      const newBoard = await Board.create({
+          title: req.body.title,
+          owner: req.body.owner,
+          columns: [
+              { title: "Backlog", cards: [] },
+              { title: "InProgress", cards: [] },
+              { title: "Release", cards: [] }
+          ],
+          members: members // Инициализируем массив участников с владельцем
+      });
+
+      res.status(201).json({ message: "Доска успешно создана", newBoard });
   } catch (error) {
-    res.status(500).json({ message: error.message });
+      res.status(500).json({ message: error.message });
   }
 });
-
 // Получить доски по владельцу
 app.get('/boards/:owner', async (req, res) => {
   try {
