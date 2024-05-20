@@ -13,9 +13,7 @@ const columnSchema = mongoose.Schema({
 });
 
 const memberSchema = mongoose.Schema({
-    userId: String,
-    userName: String,
-    avatarUrl: String
+    userId: String
 });
 
 
