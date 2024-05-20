@@ -386,6 +386,25 @@ app.post('/boards/:boardId/members/:memberId', async (req, res) => {
 });
 
 
+app.get('/boards/:boardId/members', async (req, res) => {
+  try {
+    const boardId = req.params.boardId;
+
+    // Находим доску по её ID
+    const board = await Board.findById(boardId);
+    if (!board) {
+      return res.status(404).json({ message: "Доска не найдена" });
+    }
+
+    // Возвращаем всех участников доски
+    const members = board.members;
+
+    res.status(200).json({ message: "Участники найдены", members });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // Поиск участника по id
 app.get('/boards/:boardId/members/:memberId', async (req, res) => {
   try {
