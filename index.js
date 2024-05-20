@@ -78,10 +78,9 @@ app.get('/users/:userId', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-// Получить пользователя по его имени
 app.get('/users/findByUsername', async (req, res) => {
   try {
-    const username = req.body.username;
+    const username = req.query.username; // Используем req.query для получения параметра из строки запроса
     const user = await User.findOne({ username: username });
     if (!user) {
       return res.status(404).json({ message: "Пользователь не найден" });
