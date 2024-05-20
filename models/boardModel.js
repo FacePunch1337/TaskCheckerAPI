@@ -13,7 +13,9 @@ const columnSchema = mongoose.Schema({
 });
 
 const memberSchema = mongoose.Schema({
-    userId: String
+    userId: String,
+    userName: String,
+    avatarUrl: String
 });
 
 
