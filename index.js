@@ -82,7 +82,7 @@ app.get('/users/:userId', async (req, res) => {
 app.get('/users/:username', async (req, res) => {
   try {
     const username = req.params.username;
-    const user = await User.findOne(username);
+    const user = await User.findOne({ username: username });
     if (!user) {
       return res.status(404).json({ message: "Пользователь не найден" });
     }
@@ -91,6 +91,7 @@ app.get('/users/:username', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
+
 // Аутентификация пользователя
 app.post('/login', async (req, res) => {
   try {
