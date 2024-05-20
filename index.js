@@ -357,7 +357,7 @@ app.delete('/boards/:boardId/columns/:columnId/cards/:cardId', async (req, res) 
 });
 
 // Добавление нового участника
-app.put('/boards/:boardId/members', async (req, res) => {
+app.post('/boards/:boardId/members', async (req, res) => {
   try {
     const boardId = req.params.boardId;
     const { userId } = req.body;
