@@ -78,7 +78,19 @@ app.get('/users/:userId', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 });
-
+// Получить пользователя по его ID
+app.get('/users/:username', async (req, res) => {
+  try {
+    const username = req.params.username;
+    const user = await User.findById(username);
+    if (!user) {
+      return res.status(404).json({ message: "Пользователь не найден" });
+    }
+    res.status(200).json(user);
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 // Аутентификация пользователя
 app.post('/login', async (req, res) => {
   try {
