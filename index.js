@@ -481,6 +481,8 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId/executor', async (req,
   }
 });
 
+
+
 // Получить детали карточки по ID карточки, ID колонки и ID доски
 app.get('/boards/:boardId/columns/:columnId/cards/:cardId', async (req, res) => {
   try {
@@ -506,6 +508,45 @@ app.get('/boards/:boardId/columns/:columnId/cards/:cardId', async (req, res) => 
 
     res.status(200).json({ message: "Карточка найдена", card });
   } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+// Обновление карточки в колонке
+app.put('/boards/:boardId/columns/:columnId/cards/:cardId', async (req, res) => {
+  try {
+    const { boardId, columnId, cardId } = req.params;
+
+    // Находим доску по её ID
+    const board = await Board.findById(boardId);
+    if (!board) {
+      return res.status(404).json({ message: "Доска не найдена" });
+    }
+
+    // Находим колонку по её ID
+    const column = board.columns.id(columnId);
+    if (!column) {
+      return res.status(404).json({ message: "Колонка не найдена" });
+    }
+
+    // Находим карточку по её ID
+    const card = column.cards.id(cardId);
+    if (!card) {
+      return res.status(404).json({ message: "Карточка не найдена" });
+    }
+
+    // Обновляем данные карточки
+    card.title = req.body.title || card.title;
+    card.executor = req.body.executor || card.executor;
+    card.startDate = req.body.startDate || card.startDate;
+    card.endDate = req.body.endDate || card.endDate;
+
+    // Сохраняем изменения в базе данных
+    await board.save();
+
+    // Возвращаем успешный ответ
+    res.status(200).json({ message: "Карточка успешно обновлена", card });
+  } catch (error) {
+    // Возвращаем ошибку, если что-то пошло не так
     res.status(500).json({ message: error.message });
   }
 });
