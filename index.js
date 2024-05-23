@@ -481,6 +481,36 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId/executor', async (req,
   }
 });
 
+// Получить детали карточки по ID карточки, ID колонки и ID доски
+app.get('/boards/:boardId/columns/:columnId/cards/:cardId', async (req, res) => {
+  try {
+    const { boardId, columnId, cardId } = req.params;
+
+    // Находим доску по её ID
+    const board = await Board.findById(boardId);
+    if (!board) {
+      return res.status(404).json({ message: "Доска не найдена" });
+    }
+
+    // Находим колонку по её ID
+    const column = board.columns.id(columnId);
+    if (!column) {
+      return res.status(404).json({ message: "Колонка не найдена" });
+    }
+
+    // Находим карточку по её ID
+    const card = column.cards.id(cardId);
+    if (!card) {
+      return res.status(404).json({ message: "Карточка не найдена" });
+    }
+
+    res.status(200).json({ message: "Карточка найдена", card });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
 // Подключение к MongoDB
 mongoose.connect('mongodb+srv://rezol1337:GVDGGnZDTVrT6zRi@cluster0.w3rkzvn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
   .then(() => {
