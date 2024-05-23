@@ -446,6 +446,41 @@ app.get('/boards/:boardId/members/:memberId', async (req, res) => {
   }
 });
 
+app.put('/boards/:boardId/columns/:columnId/cards/:cardId/executor', async (req, res) => {
+  try {
+    const { boardId, columnId, cardId } = req.params;
+    const { executor } = req.body;
+
+    // Находим доску по её ID
+    const board = await Board.findById(boardId);
+    if (!board) {
+      return res.status(404).json({ message: "Доска не найдена" });
+    }
+
+    // Находим колонку по её ID
+    const column = board.columns.id(columnId);
+    if (!column) {
+      return res.status(404).json({ message: "Колонка не найдена" });
+    }
+
+    // Находим карточку по её ID
+    const card = column.cards.id(cardId);
+    if (!card) {
+      return res.status(404).json({ message: "Карточка не найдена" });
+    }
+
+    // Обновляем поле executor
+    card.executor = executor;
+
+    // Сохраняем изменения в базе данных
+    await board.save();
+
+    res.status(200).json({ message: "Исполнитель успешно обновлен", card });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 // Подключение к MongoDB
 mongoose.connect('mongodb+srv://rezol1337:GVDGGnZDTVrT6zRi@cluster0.w3rkzvn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
   .then(() => {
