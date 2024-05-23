@@ -540,6 +540,11 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId', async (req, res) => 
     card.startDate = req.body.startDate || card.startDate;
     card.endDate = req.body.endDate || card.endDate;
 
+    // Update tasks if provided in the request body
+    if (req.body.tasks) {
+      card.tasks = req.body.tasks;
+    }
+
     // Сохраняем изменения в базе данных
     await board.save();
 
@@ -550,6 +555,7 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId', async (req, res) => 
     res.status(500).json({ message: error.message });
   }
 });
+
 
 
 // Подключение к MongoDB

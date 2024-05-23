@@ -1,11 +1,15 @@
 const mongoose = require('mongoose');
 
-
+const taskSchema = mongoose.Schema({
+    description: String,
+    checked: Boolean
+});
 const cardSchema = mongoose.Schema({
     title: String,
     executor: String,
     startDate: String,
-    endDate: String
+    endDate: String,
+    tasks: [taskSchema]
    
 });
 
