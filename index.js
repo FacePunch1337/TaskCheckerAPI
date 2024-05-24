@@ -557,6 +557,7 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId', async (req, res) => 
   }
 });
 
+
 // Обновление задач на карточке
 app.put('/boards/:boardId/columns/:columnId/cards/:cardId/tasks', async (req, res) => {
   try {
@@ -598,3 +599,17 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId/tasks', async (req, re
     res.status(500).json({ message: error.message });
   }
 });
+
+
+
+// Подключение к MongoDB
+mongoose.connect('mongodb+srv://rezol1337:GVDGGnZDTVrT6zRi@cluster0.w3rkzvn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
+  .then(() => {
+    console.log('Connected to MongoDB');
+    app.listen(port, () => {
+      console.log(`Node API app is running on port ${port}`);
+    });
+  })
+  .catch((error) => {
+    console.log(error);
+  });
