@@ -557,51 +557,44 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId', async (req, res) => 
   }
 });
 
-
 // Обновление задач на карточке
 app.put('/boards/:boardId/columns/:columnId/cards/:cardId/tasks', async (req, res) => {
   try {
     const { boardId, columnId, cardId } = req.params;
     const { tasks } = req.body;
 
-    // Найдем карточку по ее ID
-    const card = await Card.findOne({ _id: cardId });
+    // Найдем доску по ее ID
+    const board = await Board.findOne({ _id: boardId, 'columns._id': columnId, 'columns.cards._id': cardId });
+    if (!board) {
+      return res.status(404).json({ message: "Доска, колонка или карточка не найдены" });
+    }
+
+    // Найдем нужную колонку и карточку
+    const column = board.columns.id(columnId);
+    const card = column.cards.id(cardId);
+
     if (!card) {
       return res.status(404).json({ message: "Карточка не найдена" });
     }
 
-    // Проходим по переданным задачам
+    // Обновим задачи на карточке
     tasks.forEach(taskData => {
-      // Проверяем, существует ли уже задача с таким ID
       const existingTask = card.tasks.id(taskData._id);
       if (existingTask) {
-        // Если существует, обновляем состояние задачи
+        // Если задача существует, обновляем состояние задачи
+        existingTask.description = taskData.description;
         existingTask.checked = taskData.checked;
       } else {
         // Если не существует, добавляем новую задачу
-        card.tasks.push({ _id: taskData._id, checked: taskData.checked });
+        card.tasks.push(taskData);
       }
     });
 
     // Сохраняем изменения в базе данных
-    await card.save();
+    await board.save();
 
-    res.status(200).json({ message: "Задачи успешно обновлены" });
+    res.status(200).json({ message: "Задачи успешно обновлены", card });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
-
-
-
-// Подключение к MongoDB
-mongoose.connect('mongodb+srv://rezol1337:GVDGGnZDTVrT6zRi@cluster0.w3rkzvn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
-  .then(() => {
-    console.log('Connected to MongoDB');
-    app.listen(port, () => {
-      console.log(`Node API app is running on port ${port}`);
-    });
-  })
-  .catch((error) => {
-    console.log(error);
-  });
