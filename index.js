@@ -511,6 +511,7 @@ app.get('/boards/:boardId/columns/:columnId/cards/:cardId', async (req, res) => 
     res.status(500).json({ message: error.message });
   }
 });
+
 // Обновление карточки в колонке
 app.put('/boards/:boardId/columns/:columnId/cards/:cardId', async (req, res) => {
   try {
@@ -555,6 +556,7 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId', async (req, res) => 
     res.status(500).json({ message: error.message });
   }
 });
+
 
 
 
