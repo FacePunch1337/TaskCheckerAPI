@@ -558,7 +558,7 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId', async (req, res) => 
 });
 
 
-app.post('/boards/:boardId/columns/:columnId/cards/:cardId/tasks', async (req, res) => {
+app.put('/boards/:boardId/columns/:columnId/cards/:cardId/tasks', async (req, res) => {
   try {
     const { boardId, columnId, cardId } = req.params;
     const { tasks } = req.body;
