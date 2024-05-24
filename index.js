@@ -558,6 +558,34 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId', async (req, res) => 
 });
 
 
+// Обновление задач на карточке
+app.put('/boards/:boardId/columns/:columnId/cards/:cardId/tasks', async (req, res) => {
+  try {
+    const { boardId, columnId, cardId } = req.params;
+    const { tasks } = req.body;
+
+    // Найдем карточку по ее ID
+    const card = await Card.findOne({ _id: cardId });
+    if (!card) {
+      return res.status(404).json({ message: "Карточка не найдена" });
+    }
+
+    // Обновим состояния задач в соответствии с данными из запроса
+    tasks.forEach(taskData => {
+      const task = card.tasks.id(taskData._id);
+      if (task) {
+        task.checked = taskData.checked;
+      }
+    });
+
+    // Сохраним изменения в базе данных
+    await card.save();
+
+    res.status(200).json({ message: "Задачи успешно обновлены" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 
 // Подключение к MongoDB
