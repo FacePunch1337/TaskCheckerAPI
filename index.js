@@ -563,13 +563,13 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId/tasks', async (req, re
     const { boardId, columnId, cardId } = req.params;
     const { tasks } = req.body;
 
-    console.log('Request Data:', req.body); // Логирование запроса
-
+    // Найдем доску по ее ID
     const board = await Board.findOne({ _id: boardId, 'columns._id': columnId, 'columns.cards._id': cardId });
     if (!board) {
       return res.status(404).json({ message: "Доска, колонка или карточка не найдены" });
     }
 
+    // Найдем нужную колонку и карточку
     const column = board.columns.id(columnId);
     const card = column.cards.id(cardId);
 
@@ -577,27 +577,27 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId/tasks', async (req, re
       return res.status(404).json({ message: "Карточка не найдена" });
     }
 
+    // Обновим задачи на карточке
     tasks.forEach(taskData => {
       const existingTask = card.tasks.id(taskData._id);
       if (existingTask) {
+        // Если задача существует, обновляем состояние задачи
         existingTask.description = taskData.description;
         existingTask.checked = taskData.checked;
       } else {
+        // Если не существует, добавляем новую задачу
         card.tasks.push(taskData);
       }
     });
 
+    // Сохраняем изменения в базе данных
     await board.save();
-
-    console.log('Updated Card:', card); // Логирование обновленной карточки
 
     res.status(200).json({ message: "Задачи успешно обновлены", card });
   } catch (error) {
-    console.error(error);
     res.status(500).json({ message: error.message });
   }
 });
-
 
 
 
