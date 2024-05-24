@@ -577,15 +577,11 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId/tasks', async (req, re
       return res.status(404).json({ message: "Карточка не найдена" });
     }
 
-    // Обновим задачи на карточке
+    // Добавим новые задачи, если они отсутствуют на карточке
     tasks.forEach(taskData => {
       const existingTask = card.tasks.id(taskData._id);
-      if (existingTask) {
-        // Если задача существует, обновляем состояние задачи
-        existingTask.description = taskData.description;
-        existingTask.checked = taskData.checked;
-      } else {
-        // Если не существует, добавляем новую задачу
+      if (!existingTask) {
+        // Если задача не существует, добавляем новую задачу
         card.tasks.push(taskData);
       }
     });
@@ -598,6 +594,7 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId/tasks', async (req, re
     res.status(500).json({ message: error.message });
   }
 });
+
 
 
 
