@@ -578,13 +578,13 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId/tasks', async (req, re
     }
 
     // Добавим новые задачи, если они отсутствуют на карточке
-    tasks.forEach(taskData => {
+    //tasks.forEach(taskData => {
       const existingTask = card.tasks.id(taskData._id);
       if (!existingTask) {
         // Если задача с таким ID не существует, добавляем новую задачу
         card.tasks.push(taskData);
       }
-    });
+    //});
 
     // Сохраняем изменения в базе данных
     await board.save();
