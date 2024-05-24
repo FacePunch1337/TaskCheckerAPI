@@ -581,7 +581,7 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId/tasks', async (req, re
     tasks.forEach(taskData => {
       const existingTask = card.tasks.id(taskData._id);
       if (!existingTask) {
-        // Если задача не существует, добавляем новую задачу
+        // Если задача с таким ID не существует, добавляем новую задачу
         card.tasks.push(taskData);
       }
     });
@@ -594,6 +594,7 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId/tasks', async (req, re
     res.status(500).json({ message: error.message });
   }
 });
+
 
 
 
