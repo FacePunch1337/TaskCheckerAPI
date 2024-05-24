@@ -570,15 +570,20 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId/tasks', async (req, re
       return res.status(404).json({ message: "Карточка не найдена" });
     }
 
-    // Обновим состояния задач в соответствии с данными из запроса
+    // Проходим по переданным задачам
     tasks.forEach(taskData => {
-      const task = card.tasks.id(taskData._id);
-      if (task) {
-        task.checked = taskData.checked;
+      // Проверяем, существует ли уже задача с таким ID
+      const existingTask = card.tasks.id(taskData._id);
+      if (existingTask) {
+        // Если существует, обновляем состояние задачи
+        existingTask.checked = taskData.checked;
+      } else {
+        // Если не существует, добавляем новую задачу
+        card.tasks.push({ _id: taskData._id, checked: taskData.checked });
       }
     });
 
-    // Сохраним изменения в базе данных
+    // Сохраняем изменения в базе данных
     await card.save();
 
     res.status(200).json({ message: "Задачи успешно обновлены" });
@@ -586,6 +591,7 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId/tasks', async (req, re
     res.status(500).json({ message: error.message });
   }
 });
+
 
 
 // Подключение к MongoDB
