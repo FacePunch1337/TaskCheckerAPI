@@ -591,7 +591,7 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId/tasks', async (req, re
     // Сохраняем изменения в базе данных
     await board.save();
 
-    res.status(200).json({ message: "Задачи успешно обновлены", card, task });
+    res.status(200).json({ message: "Задачи успешно обновлены", card });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
