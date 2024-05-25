@@ -558,10 +558,10 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId', async (req, res) => 
 });
 
 
-app.put('/boards/:boardId/columns/:columnId/cards/:cardId/tasks', async (req, res) => {
+app.put('/boards/:boardId/columns/:columnId/cards/:cardId/tasks/:taskId', async (req, res) => {
   try {
-    const { boardId, columnId, cardId } = req.params;
-    const { tasks } = req.body;
+    const { boardId, columnId, cardId, taskId } = req.params;
+    const { checked } = req.body;
 
     // Найдем доску по ее ID
     const board = await Board.findOne({ _id: boardId, 'columns._id': columnId, 'columns.cards._id': cardId });
@@ -577,25 +577,22 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId/tasks', async (req, re
       return res.status(404).json({ message: "Карточка не найдена" });
     }
 
-    // Получим список существующих задач на карточке
-    const existingTasks = card.tasks.map(task => task.description);
-
-    // Добавим только новые задачи, которых еще нет на карточке
-    tasks.forEach(taskData => {
-      if (!existingTasks.includes(taskData.description)) {
-        // Если задачи с таким описанием еще нет, добавляем новую задачу
-        card.tasks.push({ description: taskData.description, checked: taskData.checked });
-      }
-    });
+    // Найдем нужную задачу на карточке и обновим состояние чекбокса
+    const task = card.tasks.id(taskId);
+    if (!task) {
+      return res.status(404).json({ message: "Задача не найдена" });
+    }
+    task.checked = checked;
 
     // Сохраняем изменения в базе данных
     await board.save();
 
-    res.status(200).json({ message: "Задачи успешно обновлены", card });
+    res.status(200).json({ message: "Состояние задачи успешно обновлено", task });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
+
 
 
 
