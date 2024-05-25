@@ -598,6 +598,30 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId/tasks', async (req, re
 });
 
 
+app.get('/boards/:boardId/columns/:columnId/cards/:cardId/tasks', async (req, res) => {
+  try {
+    const { boardId, columnId, cardId } = req.params;
+
+    // Найдем доску по ее ID
+    const board = await Board.findOne({ _id: boardId, 'columns._id': columnId, 'columns.cards._id': cardId });
+    if (!board) {
+      return res.status(404).json({ message: "Доска, колонка или карточка не найдены" });
+    }
+
+    // Найдем нужную колонку и карточку
+    const column = board.columns.id(columnId);
+    const card = column.cards.id(cardId);
+
+    if (!card) {
+      return res.status(404).json({ message: "Карточка не найдена" });
+    }
+
+    // Отправим список задач в ответе
+    res.status(200).json({ tasks: card.tasks });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 
 
