@@ -623,7 +623,40 @@ app.get('/boards/:boardId/columns/:columnId/cards/:cardId/tasks', async (req, re
   }
 });
 
+app.delete('/boards/:boardId/columns/:columnId/cards/:cardId/tasks/:taskId', async (req, res) => {
+  try {
+    const { boardId, columnId, cardId, taskId } = req.params;
 
+    // Найдем доску по ее ID
+    const board = await Board.findOne({ _id: boardId, 'columns._id': columnId, 'columns.cards._id': cardId });
+    if (!board) {
+      return res.status(404).json({ message: "Доска, колонка или карточка не найдены" });
+    }
+
+    // Найдем нужную колонку и карточку
+    const column = board.columns.id(columnId);
+    const card = column.cards.id(cardId);
+
+    if (!card) {
+      return res.status(404).json({ message: "Карточка не найдена" });
+    }
+
+    // Найдем и удалим задачу
+    const task = card.tasks.id(taskId);
+    if (!task) {
+      return res.status(404).json({ message: "Задача не найдена" });
+    }
+
+    task.remove(); // Удаляем задачу
+
+    // Сохраняем изменения в базе данных
+    await board.save();
+
+    res.status(200).json({ message: "Задача успешно удалена" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 
 // Подключение к MongoDB
 mongoose.connect('mongodb+srv://rezol1337:GVDGGnZDTVrT6zRi@cluster0.w3rkzvn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
