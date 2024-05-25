@@ -557,7 +557,6 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId', async (req, res) => 
   }
 });
 
-
 app.put('/boards/:boardId/columns/:columnId/cards/:cardId/tasks', async (req, res) => {
   try {
     const { boardId, columnId, cardId } = req.params;
@@ -577,12 +576,13 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId/tasks', async (req, re
       return res.status(404).json({ message: "Карточка не найдена" });
     }
 
-    // Получим список существующих задач на карточке
-    const existingTasks = card.tasks.map(task => task.description);
-
-    // Добавим только новые задачи, которых еще нет на карточке
+    // Обновим существующие задачи
     tasks.forEach(taskData => {
-      if (!existingTasks.includes(taskData.description)) {
+      const task = card.tasks.find(t => t.description === taskData.description);
+      if (task) {
+        // Если задача найдена, обновляем значение checked
+        task.checked = taskData.checked;
+      } else {
         // Если задачи с таким описанием еще нет, добавляем новую задачу
         card.tasks.push({ description: taskData.description, checked: taskData.checked });
       }
@@ -596,6 +596,7 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId/tasks', async (req, re
     res.status(500).json({ message: error.message });
   }
 });
+
 
 
 
