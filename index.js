@@ -577,14 +577,16 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId/tasks', async (req, re
       return res.status(404).json({ message: "Карточка не найдена" });
     }
 
-    // Создадим массив для хранения ID существующих задач на карточке
-    const existingTaskIds = card.tasks.map(task => task._id);
+    // Получим список существующих задач на карточке
+    const existingTasks = card.tasks.map(task => task.description);
 
-    // Фильтруем только новые задачи, которых еще нет на карточке
-    const newTasks = tasks.filter(task => !existingTaskIds.includes(task._id));
-
-    // Добавляем новые задачи на карточку
-    card.tasks.push(...newTasks);
+    // Добавим только новые задачи, которых еще нет на карточке
+    tasks.forEach(taskData => {
+      if (!existingTasks.includes(taskData.description)) {
+        // Если задачи с таким описанием еще нет, добавляем новую задачу
+        card.tasks.push({ description: taskData.description, checked: taskData.checked });
+      }
+    });
 
     // Сохраняем изменения в базе данных
     await board.save();
