@@ -6,6 +6,7 @@ const taskSchema = mongoose.Schema({
 });
 const cardSchema = mongoose.Schema({
     title: String,
+    description: String,
     executor: String,
     startDate: String,
     endDate: String,
