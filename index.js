@@ -537,12 +537,12 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId', async (req, res) => 
 
     // Обновляем данные карточки
     card.title = req.body.title || card.title;
-    card.description = req.body.description || card.description
+    card.description = req.body.description !== undefined ? req.body.description : card.description;
     card.executor = req.body.executor || card.executor;
     card.startDate = req.body.startDate || card.startDate;
     card.endDate = req.body.endDate || card.endDate;
 
-    // Update tasks if provided in the request body
+    // Обновляем задачи, если они есть в запросе
     if (req.body.tasks) {
       card.tasks = req.body.tasks;
     }
@@ -557,6 +557,7 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId', async (req, res) => 
     res.status(500).json({ message: error.message });
   }
 });
+
 
 app.put('/boards/:boardId/columns/:columnId/cards/:cardId/tasks', async (req, res) => {
   try {
