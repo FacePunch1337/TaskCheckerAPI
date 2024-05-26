@@ -537,7 +537,7 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId', async (req, res) => 
 
     // Обновляем данные карточки
     card.title = req.body.title || card.title;
-    card.description = req.body.title || card.description
+    card.description = req.body.description || card.description
     card.executor = req.body.executor || card.executor;
     card.startDate = req.body.startDate || card.startDate;
     card.endDate = req.body.endDate || card.endDate;
