@@ -9,7 +9,7 @@ const { v4: uuidv4 } = require('uuid');
 const { storage } = require("./firebase.js"); // Импортируем объект storage из firebase.js
 const app = express();
 
-//socket.io
+/*socket.io
 const http = require('http');
 const server = http.createServer(app);
 const io = require('socket.io')(server);
@@ -26,12 +26,12 @@ const upload = multer();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-//app.use(cors());
+
 app.get('/', (req,res) =>{
   res.send('Server is running')
 });
 
-io.on('connection', (data) => {
+/*io.on('connection', (data) => {
   console.log(data);
 });
 io.of('/users').on('connection', (socket) => {
@@ -45,7 +45,7 @@ io.of('/users').on('connection', (socket) => {
     console.log('Message received in /users namespace: ' + msg);
     io.of('/users').emit('receive_hello', msg); // Emit to clients in the /users namespace
   });
-});
+});*/
 
 const defaultAvatarURL = "https://firebasestorage.googleapis.com/v0/b/taskcheker-39fd8.appspot.com/o/avatars%2FdefaultAvatar.png?alt=media&token=2dc441da-b359-4293-9796-81c838d2c2be";
 const avatarFileName = "defaultAvatar.png";
@@ -691,9 +691,9 @@ app.delete('/boards/:boardId/columns/:columnId/cards/:cardId/tasks/:taskId', asy
     res.status(500).json({ message: error.message });
   }
 });
-server.listen(port, () => {
+/*server.listen(port, () => {
   console.log(`Socket.IO server running at ${port}/`);
-});
+});*/
 // Подключение к MongoDB
 mongoose.connect('mongodb+srv://rezol1337:GVDGGnZDTVrT6zRi@cluster0.w3rkzvn.mongodb.net/?retryWrites=true&w=majority&appName=Cluster0')
   .then(() => {
