@@ -26,19 +26,18 @@ const upload = multer();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cors()); 
+app.use(cors());
 
-// Настройка Socket.IO
-io.on('connection', (socket) => {
-  console.log('A user connected');
+io.of('/users').on('connection', (socket) => {
+  console.log('A user connected to /users namespace');
   
   socket.on('disconnect', () => {
-    console.log('A user disconnected');
+    console.log('A user disconnected from /users namespace');
   });
 
   socket.on('send_hello', (msg) => {
-    console.log('Message received: ' + msg);
-    io.emit('receive_hello', msg); // Отправляем сообщение всем подключенным клиентам
+    console.log('Message received in /users namespace: ' + msg);
+    io.of('/users').emit('receive_hello', msg); // Emit to clients in the /users namespace
   });
 });
 
