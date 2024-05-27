@@ -13,14 +13,20 @@ const app = express();
 const http = require('http');
 const server = http.createServer(app);
 const { Server } = require('socket.io');
-const io = new Server(server);
+const cors = require('cors');
+const io = new Server(server, {
+  cors: {
+    origin: "*",
+    methods: ["GET", "POST"]
+  }
+});
 const port = process.env.PORT || 8000;
 //
 const upload = multer();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
+app.use(cors()); 
 
 // Настройка Socket.IO
 io.on('connection', (socket) => {
