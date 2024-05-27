@@ -8,12 +8,33 @@ const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
 const { storage } = require("./firebase.js"); // Импортируем объект storage из firebase.js
 const app = express();
-const port = process.env.PORT || 8000;
 
+//socket.io
+const http = require('http');
+const server = http.createServer(app);
+const { Server } = require('socket.io');
+const io = new Server(server);
+const port = process.env.PORT || 8000;
+//
 const upload = multer();
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+
+
+// Настройка Socket.IO
+io.on('connection', (socket) => {
+  console.log('A user connected');
+  
+  socket.on('disconnect', () => {
+    console.log('A user disconnected');
+  });
+
+  socket.on('send_hello', (msg) => {
+    console.log('Message received: ' + msg);
+    io.emit('receive_hello', msg); // Отправляем сообщение всем подключенным клиентам
+  });
+});
 
 const defaultAvatarURL = "https://firebasestorage.googleapis.com/v0/b/taskcheker-39fd8.appspot.com/o/avatars%2FdefaultAvatar.png?alt=media&token=2dc441da-b359-4293-9796-81c838d2c2be";
 const avatarFileName = "defaultAvatar.png";
