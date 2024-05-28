@@ -47,8 +47,8 @@ io.of('/users').on('connection', (socket) => {
   });
 });*/
 
-const defaultAvatarURL = "https://firebasestorage.googleapis.com/v0/b/taskcheker-39fd8.appspot.com/o/avatars%2FdefaultAvatar.png?alt=media&token=2dc441da-b359-4293-9796-81c838d2c2be";
-const avatarFileName = "defaultAvatar.png";
+const defaultAvatarURL = "https://firebasestorage.googleapis.com/v0/b/taskcheker-39fd8.appspot.com/o/images%2Favatar.png?alt=media&token=d2d94266-0179-4219-a512-fc92d0135712";
+const avatarFileName = "avatar.png";
 
 // Получить всех пользователей
 app.get('/users', async (req, res) => {
