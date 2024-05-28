@@ -47,7 +47,7 @@ io.of('/users').on('connection', (socket) => {
   });
 });*/
 
-const defaultAvatarURL = "https://firebasestorage.googleapis.com/v0/b/taskcheker-39fd8.appspot.com/o/images%2Favatar.png?alt=media&token=d2d94266-0179-4219-a512-fc92d0135712";
+const defaultAvatarURL = "https://firebasestorage.googleapis.com/v0/b/taskcheker-39fd8.appspot.com/o/images%2Favatar.png?alt=media&token=40189a23-75f6-430d-ad34-d768f1dcc90a";
 const avatarFileName = "avatar.png";
 
 // Получить всех пользователей
