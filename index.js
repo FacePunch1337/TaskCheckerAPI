@@ -434,6 +434,35 @@ app.post('/boards/:boardId/members/:memberId', async (req, res) => {
   }
 });
 
+// Удаление участника по его ID
+app.delete('/boards/:boardId/members/:memberId', async (req, res) => {
+  try {
+    const { boardId, memberId } = req.params;
+
+    // Находим доску по её ID
+    const board = await Board.findById(boardId);
+    if (!board) {
+      return res.status(404).json({ message: "Доска не найдена" });
+    }
+
+    // Проверяем, существует ли такой участник в списке участников
+    const memberIndex = board.members.findIndex(member => member.userId === memberId);
+    if (memberIndex === -1) {
+      return res.status(404).json({ message: "Участник не найден в доске" });
+    }
+
+    // Удаляем участника из списка участников доски
+    board.members.splice(memberIndex, 1);
+
+    // Сохраняем изменения в базе данных
+    await board.save();
+
+    res.status(200).json({ message: "Участник успешно удален из доски" });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
 
 app.get('/boards/:boardId/members', async (req, res) => {
   try {
