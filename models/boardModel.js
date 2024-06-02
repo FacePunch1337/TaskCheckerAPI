@@ -1,3 +1,4 @@
+const { Int32 } = require('mongodb');
 const mongoose = require('mongoose');
 
 const taskSchema = mongoose.Schema({
@@ -8,7 +9,9 @@ const taskSchema = mongoose.Schema({
 const commentSchema = mongoose.Schema({
     text: String,
     memberId: String,
-    time: String
+    time: String,
+    index: Int32
+    
 });
 const cardSchema = mongoose.Schema({
     title: String,
