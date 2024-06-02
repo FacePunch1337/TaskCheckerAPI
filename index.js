@@ -585,10 +585,7 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId', async (req, res) => 
 
     // Обновляем комментарии, если они есть в запросе
     if (req.body.comments) {
-      // Добавляем новые комментарии к существующим
-      req.body.comments.forEach(comment => {
-        card.comments.push(comment);
-      });
+      card.comments = req.body.comments;
     }
 
     // Сохраняем изменения в базе данных
