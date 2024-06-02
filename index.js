@@ -721,24 +721,30 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId/comments', async (req,
       return res.status(404).json({ message: "Карточка не найдена" });
     }
 
-    // Обновим существующие комментарии
+    // Обновим существующие комментарии и добавим новые с правильными индексами
     comments.forEach(commentData => {
-      const comment = card.comments.find(c => c.text === commentData.text);
+      const comment = card.comments.find(c => c.text === commentData.text && c.memberId === commentData.memberId && c.time === commentData.time);
       if (comment) {
         comment.text = commentData.text;
       } else {
-        card.comments.push({ text: commentData.text, memberId: commentData.memberId, time: commentData.time, index: commentData.index });
+        card.comments.push({ text: commentData.text, memberId: commentData.memberId, time: commentData.time });
       }
+    });
+
+    // Установим правильные индексы для всех комментариев
+    card.comments.forEach((comment, index) => {
+      comment.index = index;
     });
 
     // Сохраняем изменения в базе данных
     await board.save();
 
-    res.status(200).json({ message: "Задачи успешно обновлены", card });
+    res.status(200).json({ message: "Комментарии успешно обновлены", card });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
 });
+
 
 app.get('/boards/:boardId/columns/:columnId/cards/:cardId/comments', async (req, res) => {
   try {
