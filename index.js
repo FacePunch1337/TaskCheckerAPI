@@ -727,7 +727,7 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId/comments', async (req,
       if (comment) {
         comment.text = commentData.text;
       } else {
-        card.comments.push({ text: commentData.text, memberId: commentData.memberId });
+        card.comments.push({ text: commentData.text, memberId: commentData.memberId, time: commentData.time });
       }
     });
 

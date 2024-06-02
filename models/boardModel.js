@@ -7,7 +7,8 @@ const taskSchema = mongoose.Schema({
 
 const commentSchema = mongoose.Schema({
     text: String,
-    memberId: String
+    memberId: String,
+    time: String
 });
 const cardSchema = mongoose.Schema({
     title: String,
