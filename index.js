@@ -702,7 +702,45 @@ app.delete('/boards/:boardId/columns/:columnId/cards/:cardId/tasks/:taskId', asy
   }
 });
 
+app.put('/boards/:boardId/columns/:columnId/cards/:cardId/comments', async (req, res) => {
+  try {
+    const { boardId, columnId, cardId } = req.params;
+    const { comments } = req.body;
 
+    // Найдем доску по ее ID
+    const board = await Board.findOne({ _id: boardId, 'columns._id': columnId, 'columns.cards._id': cardId });
+    if (!board) {
+      return res.status(404).json({ message: "Доска, колонка или карточка не найдены" });
+    }
+
+    // Найдем нужную колонку и карточку
+    const column = board.columns.id(columnId);
+    const card = column.cards.id(cardId);
+
+    if (!card) {
+      return res.status(404).json({ message: "Карточка не найдена" });
+    }
+
+    // Обновим существующие задачи
+    comments.forEach(commentData => {
+      const comment = card.comments.find(c => c.text === commentData.text);
+      if (comment) {
+        // Если задача найдена, обновляем значение checked
+        comment.text = commentData.text;
+      } else {
+        // Если задачи с таким описанием еще нет, добавляем новую задачу
+        card.comments.push({ text: commentData.text, memberId: commentData.memberId });
+      }
+    });
+
+    // Сохраняем изменения в базе данных
+    await board.save();
+
+    res.status(200).json({ message: "Задачи успешно обновлены", card });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
 /*server.listen(port, () => {
   console.log(`Socket.IO server running at ${port}/`);
 });*/

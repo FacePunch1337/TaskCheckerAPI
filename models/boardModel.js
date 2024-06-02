@@ -4,13 +4,19 @@ const taskSchema = mongoose.Schema({
     description: String,
     checked: Boolean
 });
+
+const commentSchema = mongoose.Schema({
+    text: String,
+    memberId: String
+});
 const cardSchema = mongoose.Schema({
     title: String,
     description: String,
     executor: String,
     startDate: String,
     endDate: String,
-    tasks: [taskSchema]
+    tasks: [taskSchema],
+    comments: [commentSchema]
    
 });
 
