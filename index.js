@@ -577,7 +577,6 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId', async (req, res) => 
     card.executor = req.body.executor || card.executor;
     card.startDate = req.body.startDate || card.startDate;
     card.endDate = req.body.endDate || card.endDate;
-    card.comments = req.body.comments || card.comments;
 
     // Обновляем задачи, если они есть в запросе
     if (req.body.tasks) {
@@ -586,7 +585,10 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId', async (req, res) => 
 
     // Обновляем комментарии, если они есть в запросе
     if (req.body.comments) {
-      card.comments = req.body.comments;
+      // Добавляем новые комментарии к существующим
+      req.body.comments.forEach(comment => {
+        card.comments.push(comment);
+      });
     }
 
     // Сохраняем изменения в базе данных
@@ -702,6 +704,8 @@ app.delete('/boards/:boardId/columns/:columnId/cards/:cardId/tasks/:taskId', asy
     res.status(500).json({ message: error.message });
   }
 });
+
+
 /*server.listen(port, () => {
   console.log(`Socket.IO server running at ${port}/`);
 });*/
