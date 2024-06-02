@@ -721,14 +721,12 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId/comments', async (req,
       return res.status(404).json({ message: "Карточка не найдена" });
     }
 
-    // Обновим существующие задачи
+    // Обновим существующие комментарии
     comments.forEach(commentData => {
       const comment = card.comments.find(c => c.text === commentData.text);
       if (comment) {
-        // Если задача найдена, обновляем значение checked
         comment.text = commentData.text;
       } else {
-        // Если задачи с таким описанием еще нет, добавляем новую задачу
         card.comments.push({ text: commentData.text, memberId: commentData.memberId });
       }
     });
@@ -737,6 +735,66 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId/comments', async (req,
     await board.save();
 
     res.status(200).json({ message: "Задачи успешно обновлены", card });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.get('/boards/:boardId/columns/:columnId/cards/:cardId/comments', async (req, res) => {
+  try {
+    const { boardId, columnId, cardId } = req.params;
+
+    // Найдем доску по ее ID
+    const board = await Board.findOne({ _id: boardId, 'columns._id': columnId, 'columns.cards._id': cardId });
+    if (!board) {
+      return res.status(404).json({ message: "Доска, колонка или карточка не найдены" });
+    }
+
+    // Найдем нужную колонку и карточку
+    const column = board.columns.id(columnId);
+    const card = column.cards.id(cardId);
+
+    if (!card) {
+      return res.status(404).json({ message: "Карточка не найдена" });
+    }
+
+    // Отправим список комментариев в ответе
+    res.status(200).json({ comments: card.comments });
+  } catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+});
+
+app.delete('/boards/:boardId/columns/:columnId/cards/:cardId/comments/:commentId', async (req, res) => {
+  try {
+    const { boardId, columnId, cardId, commentId } = req.params;
+
+    // Найдем доску по ее ID
+    const board = await Board.findOne({ _id: boardId, 'columns._id': columnId, 'columns.cards._id': cardId });
+    if (!board) {
+      return res.status(404).json({ message: "Доска, колонка или карточка не найдены" });
+    }
+
+    // Найдем нужную колонку и карточку
+    const column = board.columns.id(columnId);
+    const card = column.cards.id(cardId);
+
+    if (!card) {
+      return res.status(404).json({ message: "Карточка не найдена" });
+    }
+
+    // Найдем и удалим комментарий
+    const comment = card.comments.id(commentId);
+    if (!comment) {
+      return res.status(404).json({ message: "Комментарий не найден" });
+    }
+
+    comment.remove(); 
+
+    // Сохраняем изменения в базе данных
+    await board.save();
+
+    res.status(200).json({ message: "Комментарий успешно удалён" });
   } catch (error) {
     res.status(500).json({ message: error.message });
   }
