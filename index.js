@@ -710,14 +710,20 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId/comments', async (req,
     // Найдем доску по ее ID
     const board = await Board.findOne({ _id: boardId, 'columns._id': columnId, 'columns.cards._id': cardId });
     if (!board) {
+      console.error("Board not found");
       return res.status(404).json({ message: "Доска, колонка или карточка не найдены" });
     }
 
     // Найдем нужную колонку и карточку
     const column = board.columns.id(columnId);
-    const card = column.cards.id(cardId);
+    if (!column) {
+      console.error("Column not found");
+      return res.status(404).json({ message: "Колонка не найдена" });
+    }
 
+    const card = column.cards.id(cardId);
     if (!card) {
+      console.error("Card not found");
       return res.status(404).json({ message: "Карточка не найдена" });
     }
 
@@ -727,6 +733,7 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId/comments', async (req,
       if (comment) {
         comment.text = commentData.text;
       } else {
+        console.log("Adding new comment:", commentData);
         card.comments.push({ text: commentData.text, memberId: commentData.memberId, time: commentData.time });
       }
     });
@@ -741,9 +748,11 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId/comments', async (req,
 
     res.status(200).json({ message: "Комментарии успешно обновлены", card });
   } catch (error) {
+    console.error("Error updating comments:", error);
     res.status(500).json({ message: error.message });
   }
 });
+
 
 
 app.get('/boards/:boardId/columns/:columnId/cards/:cardId/comments', async (req, res) => {
