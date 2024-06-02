@@ -10,7 +10,7 @@ const commentSchema = mongoose.Schema({
     text: String,
     memberId: String,
     time: String,
-    index: Int32
+    index: String
     
 });
 const cardSchema = mongoose.Schema({

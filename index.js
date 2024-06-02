@@ -734,13 +734,13 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId/comments', async (req,
         comment.text = commentData.text;
       } else {
         console.log("Adding new comment:", commentData);
-        card.comments.push({ text: commentData.text, memberId: commentData.memberId, time: commentData.time, index: commentData.index });
+        card.comments.push({ text: commentData.text, memberId: commentData.memberId, time: commentData.time, index: commentData.index.toString() });
       }
     });
 
     // Установим правильные индексы для всех комментариев
     card.comments.forEach((comment, index) => {
-      comment.index = index;
+      comment.index = index.toString();
     });
 
     // Сохраняем изменения в базе данных
@@ -752,6 +752,7 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId/comments', async (req,
     res.status(500).json({ message: error.message });
   }
 });
+
 
 
 app.get('/boards/:boardId/columns/:columnId/cards/:cardId/comments', async (req, res) => {
