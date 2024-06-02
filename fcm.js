@@ -2,7 +2,7 @@
 
 
 var FCM = require('fcm-node');
-var serverKey = '<SERVER_KEY>';
+var serverKey = 'BFAFzobwbvOH-5XaQaFoRZBrmjsR08CEf9uG_hIECQew_CwDWcmbwwk32z5z9OCui6VdhMLdPDSxn6rNUF1rpm0';
 var fcm = new FCM(serverKey);
 
 var message = {
@@ -29,3 +29,4 @@ fcm.send(message, function(err, response) {
     }
 
 });
+

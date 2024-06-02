@@ -9,19 +9,9 @@ const { v4: uuidv4 } = require('uuid');
 const { storage } = require("./firebase.js"); // Импортируем объект storage из firebase.js
 const app = express();
 
-/*socket.io
-const http = require('http');
-const server = http.createServer(app);
-const io = require('socket.io')(server);
-//const cors = require('cors');
-/*const io = new Server(server, {
-  cors: {
-    origin: "*",
-    methods: ["GET", "POST"]
-  }
-});*/
+
 const port = process.env.PORT || 8000;
-//
+
 const upload = multer();
 
 app.use(express.json());
@@ -31,21 +21,6 @@ app.get('/', (req,res) =>{
   res.send('Server is running')
 });
 
-/*io.on('connection', (data) => {
-  console.log(data);
-});
-io.of('/users').on('connection', (socket) => {
-  console.log('A user connected to /users namespace');
-  
-  socket.on('disconnect', () => {
-    console.log('A user disconnected from /users namespace');
-  });
-
-  socket.on('send_hello', (msg) => {
-    console.log('Message received in /users namespace: ' + msg);
-    io.of('/users').emit('receive_hello', msg); // Emit to clients in the /users namespace
-  });
-});*/
 
 const defaultAvatarURL = "https://firebasestorage.googleapis.com/v0/b/taskcheker-39fd8.appspot.com/o/images%2Favatar.png?alt=media&token=40189a23-75f6-430d-ad34-d768f1dcc90a";
 const avatarFileName = "avatar.png";
@@ -602,10 +577,16 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId', async (req, res) => 
     card.executor = req.body.executor || card.executor;
     card.startDate = req.body.startDate || card.startDate;
     card.endDate = req.body.endDate || card.endDate;
+    card.comments = req.body.comments || card.comments;
 
     // Обновляем задачи, если они есть в запросе
     if (req.body.tasks) {
       card.tasks = req.body.tasks;
+    }
+
+    // Обновляем комментарии, если они есть в запросе
+    if (req.body.comments) {
+      card.comments = req.body.comments;
     }
 
     // Сохраняем изменения в базе данных
@@ -618,6 +599,7 @@ app.put('/boards/:boardId/columns/:columnId/cards/:cardId', async (req, res) => 
     res.status(500).json({ message: error.message });
   }
 });
+
 
 
 app.put('/boards/:boardId/columns/:columnId/cards/:cardId/tasks', async (req, res) => {
