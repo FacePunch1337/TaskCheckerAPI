@@ -6,7 +6,7 @@ const Board = require('./models/boardModel.js');
 const bcrypt = require('bcrypt');
 const multer = require('multer');
 const { v4: uuidv4 } = require('uuid');
-const { storage } = require("./firebase.js"); // Импортируем объект storage из firebase.js
+const { storage } = require("./firebase.js");
 const app = express();
 
 
@@ -48,6 +48,7 @@ app.get('/boards', async (req, res) => {
 // Создать нового пользователя
 app.post('/users', async (req, res) => {
   try {
+
     // Проверка на наличие всех необходимых полей в запросе
     const { username, email, password } = req.body;
     if (!username || !email || !password) {
@@ -63,13 +64,12 @@ app.post('/users', async (req, res) => {
     // Хеширование пароля перед сохранением в базу данных
     const hashedPassword = await bcrypt.hash(password, 10);
 
-    // Создание пользователя с указанием имени файла аватара
     const user = await User.create({
       username,
       email,
       password: hashedPassword,
-      avatarURL: req.body.avatarURL || defaultAvatarURL, // Подставляем значение по умолчанию, если не указано
-      avatarFilename: req.body.avatarFilename || avatarFileName, // Подставляем значение по умолчанию, если не указано
+      avatarURL: req.body.avatarURL || defaultAvatarURL,
+      avatarFilename: req.body.avatarFilename || avatarFileName,
     });
 
     res.status(200).json({ message: "Успешная регистрация", user });
@@ -110,7 +110,7 @@ app.post('/users/findByUsername', async (req, res) => {
 app.post('/login', async (req, res) => {
   try {
     const { username, password } = req.body;
-    // Находим пользователя по имени пользователя
+    // Находим пользователя по имени
     const user = await User.findOne({ username });
     if (!user) {
       return res.status(404).json({ message: "Пользователь не найден" });
