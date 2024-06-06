@@ -50,9 +50,9 @@ app.post('/users', async (req, res) => {
   try {
     // Проверка на наличие всех необходимых полей в запросе
     const { username, email, password } = req.body;
-    if (!username || !email || !password) {
+    /*if (!username || !email || !password) {
       return res.status(400).json({ message: "Все поля обязательны для заполнения" });
-    }
+    }*/
 
     // Проверка существует ли уже пользователь с заданным именем
     const existingUser = await User.findOne({ username });
