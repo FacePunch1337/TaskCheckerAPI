@@ -48,22 +48,28 @@ app.get('/boards', async (req, res) => {
 // Создать нового пользователя
 app.post('/users', async (req, res) => {
   try {
+    // Проверка на наличие всех необходимых полей в запросе
+    const { username, email, password } = req.body;
+    if (!username || !email || !password) {
+      return res.status(400).json({ message: "Все поля обязательны для заполнения" });
+    }
+
     // Проверка существует ли уже пользователь с заданным именем
-    const existingUser = await User.findOne({ username: req.body.username });
+    const existingUser = await User.findOne({ username });
     if (existingUser) {
       return res.status(400).json({ message: "Пользователь с таким именем уже существует" });
     }
 
     // Хеширование пароля перед сохранением в базу данных
-    const hashedPassword = await bcrypt.hash(req.body.password, 10);
+    const hashedPassword = await bcrypt.hash(password, 10);
 
     // Создание пользователя с указанием имени файла аватара
     const user = await User.create({
-      username: req.body.username,
-      email: req.body.email,
+      username,
+      email,
       password: hashedPassword,
-      avatarURL: defaultAvatarURL,
-      avatarFilename: avatarFileName, // Используем переданное имя файла
+      avatarURL: req.body.avatarURL || defaultAvatarURL, // Подставляем значение по умолчанию, если не указано
+      avatarFilename: req.body.avatarFilename || avatarFileName, // Подставляем значение по умолчанию, если не указано
     });
 
     res.status(200).json({ message: "Успешная регистрация", user });
