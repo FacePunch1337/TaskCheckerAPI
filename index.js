@@ -92,6 +92,31 @@ app.get('/users/:userId', async (req, res) => {
   }
 });
 
+// Удалить пользователя по ID
+app.delete('/users/:id', async (req, res) => {
+  try {
+    const userId = req.params.id;
+    console.log(`Запрос на удаление пользователя с ID: ${userId}`);
+
+    // Проверка существует ли пользователь с заданным ID
+    const user = await User.findById(userId);
+    if (!user) {
+      console.log(`Пользователь с ID ${userId} не найден`);
+      return res.status(404).json({ message: "Пользователь не найден" });
+    }
+
+    // Удаление пользователя из базы данных
+    await User.findByIdAndDelete(userId);
+
+    console.log(`Пользователь с ID ${userId} успешно удален`);
+    res.status(200).json({ message: "Пользователь успешно удален" });
+  } catch (error) {
+    console.error(`Ошибка при удалении пользователя с ID ${userId}: ${error.message}`);
+    res.status(500).json({ message: error.message });
+  }
+});
+
+
 app.post('/users/findByUsername', async (req, res) => {
   try {
     const username = req.body.username; 
@@ -138,7 +163,7 @@ app.post('/upload', upload.single('image'), async (req, res) => {
     // Генерируем уникальное имя файла
     const fileName = `${uuidv4()}-${req.file.originalname}`;
 
-    // Путь куда сохранить файл в Firebase Storage
+    // Путь в Firebase Storage
     const filePath = `avatars/${fileName}`;
 
     // Загружаем файл в Firebase Storage
