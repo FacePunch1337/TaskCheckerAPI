@@ -20,8 +20,8 @@
 
 
 ### <p align="center"></p>
-##### <p align="center">Deployed on the <a href="vercel.com" target="blank">Vercel</a></p>
+##### <p align="center">Deployed on the <a href="https://vercel.com/" target="blank">Vercel</a></p>
 
-<a href="https://t.me/wa1pper" target="blank"></a>
+
 
 ---
