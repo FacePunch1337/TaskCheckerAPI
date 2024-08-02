@@ -9,7 +9,7 @@
 
 ---
 <p align="center">
-    <img src="https://github.com/FacePunch1337/TaskChecker/blob/main/app/src/main/res/drawable/Logo.png"/>
+    <img src="https://github.com/FacePunch1337/TaskCheckerAPI/blob/main/Logo.png"/>
 </p>
 
 
@@ -20,7 +20,7 @@
 
 
 ### <p align="center"></p>
-##### <p align="center">Using the TaskCheckerAPI </p>
+##### <p align="center">Deployed on the vercel.com</p>
 
 
 
